@@ -1,9 +1,11 @@
-import HomeSection from "../commons/HomeSection";
+import HomeSection from '../commons/HomeSection';
 
 export default function Adoption() {
   return (
     <HomeSection id="adoption">
-        <div>Teste</div>
+      <>
+      <h1>Teste</h1>
+      </>
     </HomeSection>
-  )
+  );
 }
