@@ -14,7 +14,7 @@ export default function HomeSection({
   children,
 }: HomeSectionProps) {
   return (
-    <section className={cn('mt-[5.75rem]', sectionClassName)}>
+    <section className={cn('', sectionClassName)}>
       <div
         className={cn(
           'mx-auto max-w-[56.25rem] py-12 flex flex-col gap-4',
