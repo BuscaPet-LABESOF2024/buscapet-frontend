@@ -3,7 +3,7 @@ export default function Header() {
     <header className=" bg-slate-100 fixed w-full top-0 left-0">
       <div className="flex flex-wrap justify-between items-center py-2 max-w-[56.25rem] mx-auto">
         <img
-          src="./public/img/logo-atual.png"
+          src="./img/logo-atual.png"
           alt="logo buscapet"
           className="w-[5rem] h-[5rem]"
         />
