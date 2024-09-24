@@ -9,7 +9,6 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-
   const {
     formState: { errors },
     handleSubmit,
@@ -97,23 +96,29 @@ export default function Register() {
                 >
                   Senha
                 </label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  {...register('password')}
-                />
-                <button onClick={() => setShowPassword(!showPassword)} className='rounded-md hover:bg-gray-200 px-2 py-1 text-sm transition-all ease-in-out text-green-400 font-medium'  >
-                  {showPassword ? 'Hide' : 'Show'}
-                </button>
-                <div className='flex gap-2'>
-                {errors.password?.message && (
-                  <ErrorsMessage
-                    message={errors.password.message}
-                    className="mt-1"
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    placeholder="••••••••"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                    {...register('password')}
                   />
-                )}
+                  <button
+                    onClick={() => setShowPassword(!showPassword)}
+                    type="button"
+                    className="rounded-md hover:text-green-300 p-2 text-xs transition-all ease-in-out text-green-400 font-medium absolute inset-y-0 end-1"
+                  >
+                    {showPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  {errors.password?.message && (
+                    <ErrorsMessage
+                      message={errors.password.message}
+                      className="mt-1"
+                    />
+                  )}
                 </div>
               </div>
               <div>
@@ -123,19 +128,28 @@ export default function Register() {
                 >
                   Confirmar senha
                 </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  {...register('confirmPassword')}
-                />
-                {errors.confirmPassword?.message && (
-                  <ErrorsMessage
-                    message={errors.confirmPassword.message}
-                    className="mt-1"
+                <div className='relative'>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="••••••••"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    {...register('confirmPassword')}
                   />
-                )}
+                  {errors.confirmPassword?.message && (
+                    <ErrorsMessage
+                      message={errors.confirmPassword.message}
+                      className="mt-1"
+                    />
+                  )}
+                  <button
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    type="button"
+                    className="rounded-md hover:text-green-300 p-2 text-xs transition-all ease-in-out text-green-400 font-medium absolute inset-y-0 end-1"
+                  >
+                    {showConfirmPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
               </div>
               <button
                 type="submit"
