@@ -1,5 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { UserApi } from '.';
+
+export interface IGetUser {
+  userId: number;
+}
 
 export function useGetUser(payload: IGetUser) {
   return useQuery({
@@ -8,6 +12,15 @@ export function useGetUser(payload: IGetUser) {
   });
 }
 
-export interface IGetUser {
-  userId: number;
+export interface ICreateNewUser {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+}
+
+export function useCreateUser(payload: ICreateNewUser) {
+  return useMutation({
+    mutationFn: () => UserApi.createNewUser(payload)
+  });
 }
