@@ -5,6 +5,7 @@ import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import RegisterPage from './pages/register/index.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Adoption from './components/adoption/Adoption.tsx';
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     path: '/register',
     element: <RegisterPage />,
   },
+  {
+    path: '/adoption',
+    element: <Adoption/>
+  }
 ]);
 
 createRoot(document.getElementById('root')!).render(

@@ -1,11 +1,11 @@
 import HomeSection from '../commons/HomeSection';
+import Adoption from '../adoption/Adoption'; // Importando o componente
 
-export default function Adoption() {
+export default function SomeComponent() {
   return (
-    <HomeSection id="adoption">
-      <>
-      <h1>Teste</h1>
-      </>
+    <HomeSection id="some-section">
+      <> <Adoption /> </>
+     
     </HomeSection>
   );
 }
