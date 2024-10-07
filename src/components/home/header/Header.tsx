@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 export default function Header() {
   return (
-    <header className=" bg-slate-100 fixed w-full top-0 left-0">
+    <header className="bg-slate-100 fixed w-full top-0 left-0">
       <div className="flex flex-wrap justify-between items-center py-2 max-w-[56.25rem] mx-auto">
         <img
           src="./img/logo-atual.png"
@@ -17,6 +19,9 @@ export default function Header() {
             </li>
             <li>
               <a>Animais perdidos</a>
+            </li>
+            <li>
+              <Link to="/missing-animal">Cadastrar Animal</Link>
             </li>
             <li>
               <a>Contato</a>
