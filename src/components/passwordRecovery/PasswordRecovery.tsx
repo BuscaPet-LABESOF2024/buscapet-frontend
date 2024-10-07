@@ -1,34 +1,37 @@
-import { useForm } from 'react-hook-form';
-
-type FormData = {
-  email: string;
-};
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { PasswordRecoveryFormSchema } from './types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import ErrorsMessage from '../commons/FormErrorsMessage';
+import { passwordRecoverySchema } from './schema';
 
 export default function PasswordRecovery() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<PasswordRecoveryFormSchema>({
+    resolver: zodResolver(passwordRecoverySchema),
+    defaultValues: {
+      email: '',
+    },
+  });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit: SubmitHandler<PasswordRecoveryFormSchema> = (data) => {
     console.log(data);
   };
 
   return (
-    <section className="bg-gray-500 dark:bg-gray-900">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a
-          href="#"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-        >
+    <section className="bg-gray-50">
+      <div className="flex flex-col items-center justify-center px-6 py-6 gap-4 mx-auto md:h-screen lg:py-0">
+        <div className="flex items-center">
           <img
-            className="w-32 h-32 mr-2"
+            className="w-[6rem] h-[6rem]"
             src="./img/logo-atual.png"
             alt="logo"
           />
-        </a>
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <span className="text-3xl font-bold text-purple-700">BuscaPet</span>
+        </div>
+        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-xl xl:p-0">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Recuperação de Senha
@@ -36,32 +39,26 @@ export default function PasswordRecovery() {
             <form
               className="space-y-4 md:space-y-6"
               onSubmit={handleSubmit(onSubmit)}
-              noValidate
             >
               <div>
                 <label
                   htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Seu email
                 </label>
                 <input
                   type="email"
                   id="email"
-                  {...register('email', {
-                    required: 'O email é obrigatório.',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Formato de email inválido.',
-                    },
-                  })}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="email@email.com"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  placeholder="nome@email.com"
+                  {...register('email')}
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
+                {errors.email?.message && (
+                  <ErrorsMessage
+                    message={errors.email.message}
+                    className="mt-1"
+                  />
                 )}
               </div>
               <button
