@@ -4,6 +4,7 @@ import { registerSchema } from './schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ErrorsMessage from '../commons/FormErrorsMessage';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,11 +31,13 @@ export default function Register() {
     <section className="bg-gray-50">
       <div className="flex flex-col items-center justify-center px-6 py-6 gap-4 mx-auto md:h-screen lg:py-0">
         <div className="flex items-center">
-          <img
-            className="w-[6rem] h-[6rem]"
-            src="./img/logo-atual.png"
-            alt="logo"
-          />
+          <Link to="/">
+            <img
+              className="w-[6rem] h-[6rem]"
+              src="./img/logo-atual.png"
+              alt="logo"
+            />
+          </Link>
           <span className="text-3xl font-bold text-purple-700">BuscaPet</span>
         </div>
         <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-xl xl:p-0">
@@ -128,7 +131,7 @@ export default function Register() {
                 >
                   Confirmar senha
                 </label>
-                <div className='relative'>
+                <div className="relative">
                   <input
                     type="password"
                     id="confirmPassword"

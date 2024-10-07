@@ -1,116 +1,106 @@
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Eye, EyeClosed } from 'phosphor-react';
-
-type FormData = {
-  email: string;
-  password: string;
-};
+import type { LoginFormSchema } from './types';
+import { loginSchema } from './schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import ErrorsMessage from '../commons/FormErrorsMessage';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState('');
+
   const {
+    formState: { errors },
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<LoginFormSchema>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const onSubmit = (data: FormData) => {
-    const validEmail = 'test@example.com';
-    const validPassword = 'password123';
-
-    if (data.email === validEmail && data.password === validPassword) {
-      console.log('Login bem-sucedido!', data);
-      setLoginError('');
-    } else {
-      setLoginError('Email ou senha inválidos. Por favor, tente novamente.');
-    }
+  const onSubmit: SubmitHandler<LoginFormSchema> = (data) => {
+    console.log(data);
   };
 
   return (
-    <section className="bg-gray-500 dark:bg-gray-900">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a
-          href="#"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-        >
-          <img
-            className="w-32 h-32 mr-2"
-            src="./img/logo-atual.png"
-            alt="logo"
-          />
-        </a>
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+    <section className="bg-gray-50">
+      <div className="flex flex-col items-center justify-center px-6 py-6 gap-4 mx-auto md:h-screen lg:py-0">
+        <div className="flex items-center mt-16">
+          <Link to="/">
+            <img
+              className="w-[6rem] h-[6rem]"
+              src="./img/logo-atual.png"
+              alt="logo"
+            />
+          </Link>
+          <span className="text-3xl font-bold text-purple-700">BuscaPet</span>
+        </div>
+        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-xl xl:p-0">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
               Entre na sua conta
             </h1>
-
-            {loginError && <p className="text-red-600">{loginError}</p>}
 
             <form
               className="space-y-4 md:space-y-6"
               onSubmit={handleSubmit(onSubmit)}
-              noValidate
             >
               <div>
                 <label
                   htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Seu email
                 </label>
                 <input
                   type="email"
                   id="email"
-                  {...register('email', {
-                    required: 'O email é obrigatório',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Email inválido',
-                    },
-                  })}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="email@email.com"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  placeholder="nome@email.com"
+                  {...register('email')}
                 />
-                {errors.email && (
-                  <p className="text-red-600">{errors.email.message}</p>
+                {errors.email?.message && (
+                  <ErrorsMessage
+                    message={errors.email.message}
+                    className="mt-1"
+                  />
                 )}
               </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className="block mb-2 text-sm font-medium text-gray-900"
                 >
                   Senha
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    {...register('password', {
-                      required: 'A senha é obrigatória',
-                    })}
                     id="password"
                     placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    {...register('password')}
                   />
                   <button
+                    onClick={() => setShowPassword(!showPassword)}
                     type="button"
-                    onClick={togglePasswordVisibility}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                    className="rounded-md hover:text-green-300 p-2 text-xs transition-all ease-in-out text-green-400 font-medium absolute inset-y-0 end-1"
                   >
-                    {showPassword ? <EyeClosed size={24} /> : <Eye size={24} />}
+                    {showPassword ? 'Hide' : 'Show'}
                   </button>
                 </div>
-                {errors.password && (
-                  <p className="text-red-600">{errors.password.message}</p>
-                )}
+                <div className="flex gap-2">
+                  {errors.password?.message && (
+                    <ErrorsMessage
+                      message={errors.password.message}
+                      className="mt-1"
+                    />
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center justify-between">

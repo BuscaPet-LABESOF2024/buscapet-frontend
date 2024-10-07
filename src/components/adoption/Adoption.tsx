@@ -21,7 +21,9 @@ const formatPhoneNumber = (value: string) => {
 };
 
 export default function Adoption() {
-  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(
+    null
+  );
   const [showErrorMessage, setShowErrorMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1); // Estado para controlar a parte do formulário
 
@@ -78,35 +80,56 @@ export default function Adoption() {
     <section id="adoption">
       <div className="flex justify-center items-center min-h-screen">
         <div className="w-full max-w-xl bg-gray-100 p-8 rounded-lg shadow-lg">
-          <h1 className="text-2xl font-bold mb-6 text-center">Cadastro de Animal para Adoção</h1>
-          
+          <h1 className="text-2xl font-bold mb-6 text-center">
+            Cadastro de Animal para Adoção
+          </h1>
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {currentStep === 1 && (
               <>
                 <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700">Título do Anúncio</label>
+                  <label
+                    htmlFor="title"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Título do Anúncio
+                  </label>
                   <input
                     id="title"
                     {...register('title')}
                     placeholder="Ex: Cachorro para adoção"
                     className="border p-2 rounded w-full"
                   />
-                  {errors.title?.message && <ErrorsMessage message={errors.title.message} />}
+                  {errors.title?.message && (
+                    <ErrorsMessage message={errors.title.message} />
+                  )}
                 </div>
 
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descrição</label>
+                  <label
+                    htmlFor="description"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Descrição
+                  </label>
                   <textarea
                     id="description"
                     {...register('description')}
                     placeholder="Descrição geral da origem do animal, bairro encontrado, personalidade, etc... Detalhes específicos serão preenchidos na próxima etapa."
                     className="border p-2 rounded w-full"
                   />
-                  {errors.description?.message && <ErrorsMessage message={errors.description.message} />}
+                  {errors.description?.message && (
+                    <ErrorsMessage message={errors.description.message} />
+                  )}
                 </div>
 
                 <div>
-                  <label htmlFor="contact_phone" className="block text-sm font-medium text-gray-700">Telefone de Contato</label>
+                  <label
+                    htmlFor="contact_phone"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Telefone de Contato
+                  </label>
                   <input
                     id="contact_phone"
                     {...register('contact_phone')}
@@ -114,14 +137,21 @@ export default function Adoption() {
                     className="border p-2 rounded w-full"
                     onChange={handlePhoneChange} // Formata o telefone conforme a digitação
                   />
-                  {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
+                  {errors.contact_phone?.message && (
+                    <ErrorsMessage message={errors.contact_phone.message} />
+                  )}
                 </div>
 
-                <div {...getRootProps()} className="border-dashed border-2 p-4 text-center">
+                <div
+                  {...getRootProps()}
+                  className="border-dashed border-2 p-4 text-center"
+                >
                   <input {...getInputProps()} />
                   <p>Arraste ou clique para fazer upload de fotos do animal</p>
                 </div>
-                {errors.images?.message && <ErrorsMessage message={errors.images.message} />}
+                {errors.images?.message && (
+                  <ErrorsMessage message={errors.images.message} />
+                )}
 
                 <div className="flex justify-between">
                   <button
@@ -138,7 +168,12 @@ export default function Adoption() {
             {currentStep === 2 && (
               <>
                 <div>
-                  <label htmlFor="type" className="block text-sm font-medium text-gray-700">Tipo de Animal</label>
+                  <label
+                    htmlFor="type"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Tipo de Animal
+                  </label>
                   <input
                     id="type"
                     {...register('type')}
@@ -148,7 +183,12 @@ export default function Adoption() {
                 </div>
 
                 <div>
-                  <label htmlFor="breed" className="block text-sm font-medium text-gray-700">Raça</label>
+                  <label
+                    htmlFor="breed"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Raça
+                  </label>
                   <input
                     id="breed"
                     {...register('breed')}
@@ -158,7 +198,12 @@ export default function Adoption() {
                 </div>
 
                 <div>
-                  <label htmlFor="size_animal" className="block text-sm font-medium text-gray-700">Tamanho do Animal</label>
+                  <label
+                    htmlFor="size_animal"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Tamanho do Animal
+                  </label>
                   <input
                     id="size_animal"
                     {...register('size_animal')}
@@ -168,7 +213,12 @@ export default function Adoption() {
                 </div>
 
                 <div>
-                  <label htmlFor="weight" className="block text-sm font-medium text-gray-700">Peso (kg)</label>
+                  <label
+                    htmlFor="weight"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Peso (kg)
+                  </label>
                   <input
                     id="weight"
                     {...register('weight')}
@@ -178,7 +228,12 @@ export default function Adoption() {
                 </div>
 
                 <div>
-                  <label htmlFor="age" className="block text-sm font-medium text-gray-700">Idade</label>
+                  <label
+                    htmlFor="age"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Idade
+                  </label>
                   <input
                     id="age"
                     {...register('age')}
@@ -206,8 +261,16 @@ export default function Adoption() {
               </>
             )}
 
-            {showSuccessMessage && <p className="text-green-500 mt-4 text-center">{showSuccessMessage}</p>}
-            {showErrorMessage && <p className="text-red-500 mt-4 text-center">{showErrorMessage}</p>}
+            {showSuccessMessage && (
+              <p className="text-green-500 mt-4 text-center">
+                {showSuccessMessage}
+              </p>
+            )}
+            {showErrorMessage && (
+              <p className="text-red-500 mt-4 text-center">
+                {showErrorMessage}
+              </p>
+            )}
           </form>
         </div>
       </div>
