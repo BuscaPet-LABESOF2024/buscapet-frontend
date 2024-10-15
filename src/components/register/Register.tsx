@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import ErrorsMessage from '../commons/FormErrorsMessage';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCreateUser } from '../../api/user/hooks';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,8 +25,15 @@ export default function Register() {
     },
   });
 
-  const onSubmit: SubmitHandler<RegisterFormSchema> = (data) =>
-    console.log(data);
+  const { mutate } = useCreateUser();
+
+  const onSubmit: SubmitHandler<RegisterFormSchema> = (data) => {
+    mutate({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    });
+  };
 
   return (
     <section className="bg-gray-50">
