@@ -15,12 +15,11 @@ export function useGetUser(payload: IGetUser) {
 export interface ICreateNewUser {
   name: string;
   email: string;
-  phone: string;
   password: string;
 }
 
-export function useCreateUser(payload: ICreateNewUser) {
+export function useCreateUser() {
   return useMutation({
-    mutationFn: () => UserApi.createNewUser(payload)
+    mutationFn: (newUser: ICreateNewUser) => UserApi.createNewUser(newUser),
   });
 }
