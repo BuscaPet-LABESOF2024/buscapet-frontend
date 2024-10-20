@@ -1,15 +1,22 @@
 import Home from '../components/home/Home';
 import RegisterPage from '../pages/register';
-import Login from '../components/login/Login';
 import PasswordRecovery from '../components/passwordRecovery/PasswordRecovery';
 import Adoption from '../components/adoption/Adoption';
 import MissingAnimal from '../components/missing-animal/MissingAnimal';
 import { useAuth } from '../providers/auth-provider/hook';
 import { ProtectedRoute } from './ProtectedRoute';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { LoginPage } from '../pages/login';
 
 const Routes = () => {
   const { token } = useAuth();
+
+  const routesForPublic = [
+    {
+      path: '/home',
+      element: <Home />,
+    },
+  ]
 
   const routesForAuthenticatedOnly = [
     {
@@ -30,16 +37,12 @@ const Routes = () => {
 
   const routesForNotAuthenticatedOnly = [
     {
-      path: '/',
-      element: <Home />,
-    },
-    {
       path: '/register',
       element: <RegisterPage />,
     },
     {
       path: '/login',
-      element: <Login />,
+      element: <LoginPage />,
     },
     {
       path: '/password-recovery',
@@ -48,6 +51,7 @@ const Routes = () => {
   ];
 
   const router = createBrowserRouter([
+    ...routesForPublic,
     ...(!token ? routesForNotAuthenticatedOnly : []),
     ...routesForAuthenticatedOnly,
   ]);
