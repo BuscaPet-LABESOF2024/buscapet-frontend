@@ -1,0 +1,62 @@
+import Home from '../components/home/Home';
+import RegisterPage from '../pages/register';
+import PasswordRecovery from '../components/passwordRecovery/PasswordRecovery';
+import Adoption from '../components/adoption/Adoption';
+import MissingAnimal from '../components/missing-animal/MissingAnimal';
+import { useAuth } from '../providers/auth-provider/hook';
+import { ProtectedRoute } from './ProtectedRoute';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { LoginPage } from '../pages/login';
+
+const Routes = () => {
+  const { token } = useAuth();
+
+  const routesForPublic = [
+    {
+      path: '/home',
+      element: <Home />,
+    },
+  ]
+
+  const routesForAuthenticatedOnly = [
+    {
+      path: '/',
+      element: <ProtectedRoute />,
+      children: [
+        {
+          path: '/adoption',
+          element: <Adoption />,
+        },
+        {
+          path: '/missing-animal',
+          element: <MissingAnimal />,
+        },
+      ],
+    },
+  ];
+
+  const routesForNotAuthenticatedOnly = [
+    {
+      path: '/register',
+      element: <RegisterPage />,
+    },
+    {
+      path: '/login',
+      element: <LoginPage />,
+    },
+    {
+      path: '/password-recovery',
+      element: <PasswordRecovery />,
+    },
+  ];
+
+  const router = createBrowserRouter([
+    ...routesForPublic,
+    ...(!token ? routesForNotAuthenticatedOnly : []),
+    ...routesForAuthenticatedOnly,
+  ]);
+
+  return <RouterProvider router={router} />;
+};
+
+export default Routes;

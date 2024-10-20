@@ -4,15 +4,25 @@ import type { LoginFormSchema } from './types';
 import { loginSchema } from './schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ErrorsMessage from '../commons/FormErrorsMessage';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useLogin } from '../../api/auth/hook';
+import { useAuth } from '../../providers/auth-provider/hook';
+import type { AxiosError } from 'axios';
+import { Snackbar } from '@mui/material';
 
 export default function Login() {
+  const { setToken } = useAuth();
+  const navigate = useNavigate();
+  const { mutateAsync: handleLogin } = useLogin();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [openSnackbar, setOpenSnackBar] = useState(false);
 
   const {
     formState: { errors },
     register,
     handleSubmit,
+    setError,
   } = useForm<LoginFormSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -21,8 +31,33 @@ export default function Login() {
     },
   });
 
-  const onSubmit: SubmitHandler<LoginFormSchema> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<LoginFormSchema> = async (data) => {
+    const { email, password } = data;
+
+    try {
+      const result = await handleLogin({ email, password });
+
+      setToken(result.token);
+      navigate('/home');
+    } catch (error) {
+      if ((error as AxiosError)?.response?.status === 401) {
+        return setError('email', {
+          type: 'manual',
+          message: 'Credenciais inválidas, tente novamente!',
+        });
+      }
+
+      return (
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={4000}
+          onClose={() => setOpenSnackBar(false)}
+          message="Erro ao fazer login"
+        />
+      );
+
+      console.error(error);
+    }
   };
 
   return (
