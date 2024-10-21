@@ -64,7 +64,7 @@ export default function Login() {
     <section className="bg-gray-50">
       <div className="flex flex-col items-center justify-center px-6 py-6 gap-4 mx-auto md:h-screen lg:py-0">
         <div className="flex items-center mt-16">
-          <Link to="/">
+          <Link to="/home">
             <img
               className="w-[6rem] h-[6rem]"
               src="./img/logo-atual.png"
