@@ -19,7 +19,6 @@ axios.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token && config.headers) {
       config.headers['Authorization'] = `JWT ${token}`;
-      config.headers['Access-Control-Allow-Credentials'] = true;
     }
     return config;
   },

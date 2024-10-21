@@ -7,6 +7,7 @@ import { useAuth } from '../providers/auth-provider/hook';
 import { ProtectedRoute } from './ProtectedRoute';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginPage } from '../pages/login';
+import AnnouncementRegistrationPage from '../pages/announcement-registration';
 
 const Routes = () => {
   const { token } = useAuth();
@@ -16,7 +17,15 @@ const Routes = () => {
       path: '/home',
       element: <Home />,
     },
-  ]
+    {
+      path: '/register',
+      element: <RegisterPage />,
+    },
+    {
+      path: '/login',
+      element: <LoginPage />,
+    },
+  ];
 
   const routesForAuthenticatedOnly = [
     {
@@ -31,19 +40,23 @@ const Routes = () => {
           path: '/missing-animal',
           element: <MissingAnimal />,
         },
+        {
+          path: '/announcement-registration',
+          element: <AnnouncementRegistrationPage />,
+        },
       ],
     },
   ];
 
   const routesForNotAuthenticatedOnly = [
-    {
-      path: '/register',
-      element: <RegisterPage />,
-    },
-    {
-      path: '/login',
-      element: <LoginPage />,
-    },
+    // {
+    //   path: '/register',
+    //   element: <RegisterPage />,
+    // },
+    // {
+    //   path: '/login',
+    //   element: <LoginPage />,
+    // },
     {
       path: '/password-recovery',
       element: <PasswordRecovery />,

@@ -4,17 +4,24 @@ import { registerSchema } from './schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ErrorsMessage from '../commons/FormErrorsMessage';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCreateUser } from '../../api/user/hooks';
+import { AxiosError } from 'axios';
+import { Snackbar } from '@mui/material';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [openSnackbar, setOpenSnackBar] = useState(false);
+
+  const navigate = useNavigate();
+  const { mutateAsync: createUser } = useCreateUser();
 
   const {
     formState: { errors },
     handleSubmit,
     register,
+    setError,
   } = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -25,21 +32,38 @@ export default function Register() {
     },
   });
 
-  const { mutate } = useCreateUser();
+  // const { mutate } = useCreateUser();
 
-  const onSubmit: SubmitHandler<RegisterFormSchema> = (data) => {
-    mutate({
-      name: data.name,
-      email: data.email,
-      password: data.password,
-    });
+  const onSubmit: SubmitHandler<RegisterFormSchema> = async (data) => {
+    const { name, email, password } = data;
+
+    try {
+      await createUser({ name, email, password });
+
+      navigate('/login');
+    } catch (error) {
+      if ((error as AxiosError)?.response?.status === 401) {
+        setError('email', {
+          type: 'manual',
+          message: 'Email ja existe',
+        });
+      } else {
+        setOpenSnackBar(true);
+      }
+    }
+
+    // mutate({
+    //   name: data.name,
+    //   email: data.email,
+    //   password: data.password,
+    // });
   };
 
   return (
     <section className="bg-gray-50">
       <div className="flex flex-col items-center justify-center px-6 py-6 gap-4 mx-auto md:h-screen lg:py-0">
         <div className="flex items-center">
-          <Link to="/">
+          <Link to="/home">
             <img
               className="w-[6rem] h-[6rem]"
               src="./img/logo-atual.png"
@@ -181,6 +205,13 @@ export default function Register() {
           </div>
         </div>
       </div>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={() => setOpenSnackBar(false)}
+        message="Erro ao criar conta."
+      />
     </section>
   );
 }

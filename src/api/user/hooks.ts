@@ -20,6 +20,6 @@ export interface ICreateNewUser {
 
 export function useCreateUser() {
   return useMutation({
-    mutationFn: (newUser: ICreateNewUser) => UserApi.createNewUser(newUser),
+    mutationFn: (payload: ICreateNewUser) => UserApi.createNewUser(payload),
   });
 }

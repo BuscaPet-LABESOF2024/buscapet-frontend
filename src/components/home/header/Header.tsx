@@ -4,7 +4,7 @@ export default function Header() {
   return (
     <header className="bg-slate-100 fixed w-full top-0 left-0">
       <div className="flex flex-wrap justify-between items-center py-2 max-w-[56.25rem] mx-auto">
-        <Link to="/">
+        <Link to="/home">
           <img
             src="./img/logo-atual.png"
             alt="logo buscapet"
@@ -14,19 +14,13 @@ export default function Header() {
         <nav>
           <ul className="flex flex-wrap justify-evenly gap-6">
             <li>
-              <a>Adoção</a>
+              <Link to="/home">Início</Link>
             </li>
             <li>
-              <a>Animais perdidos</a>
+              <a>Buscar</a>
             </li>
             <li>
-              <Link to="/missing-animal">Cadastrar Animal</Link>
-            </li>
-            <li>
-              <a href="/#about">Sobre</a>
-            </li>
-            <li>
-              <a>Contato</a>
+              <Link to="/announcement-registration">Cadastrar Anúncio</Link>
             </li>
           </ul>
         </nav>
