@@ -25,7 +25,7 @@ const AnnouncementPanel: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 mt-24 bg-gray-100 w-full max-w-7xl px-4">
+    <div className="container mx-auto p-4 mt-24 w-full max-w-7xl px-4">
       {announcements.length === 0 ? (
         <p className="text-center">Nenhum anúncio encontrado.</p>
       ) : (
