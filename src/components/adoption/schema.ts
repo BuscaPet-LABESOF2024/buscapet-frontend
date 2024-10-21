@@ -3,17 +3,31 @@ import { z } from 'zod';
 export const adoptionSchema = z.object({
   title: z.string().min(1, 'O título é obrigatório'),
   description: z.string().min(1, 'A descrição é obrigatória'),
-  animal: z.string().optional(),
-  announcement_type: z.string().optional(),
+
+  // Informações do animal
+  animal: z.object({
+    name: z.string().min(1, 'O nome do animal é obrigatório'),
+    statusAnimal: z.number().int().min(1, 'O status do animal é obrigatório'), // Definido como 3 no form
+    type: z.string().min(1, 'O tipo do animal é obrigatório'),
+    breed: z.string().min(1, 'A raça é obrigatória'),
+    size: z.string(),
+    weight: z.number().min(1, 'O peso é obrigatório'),
+    age: z.number().min(1, 'A idade é obrigatória'),
+  }),
+
+  // Tipo de anúncio
+  announcementType: z.object({
+    id: z.number().int().min(1, 'O tipo de anúncio é obrigatório'),
+  }),
+
+  // Contato
   contact_phone: z.string().min(10, 'O telefone de contato é obrigatório'),
-  contact_email: z.string().email('E-mail inválido'),
-  images: z.array(z.instanceof(File)),
-  
-  // Campos opcionais
-  status_animal: z.enum(['adoção', 'encontrado', 'desaparecido']).optional(),
-  type: z.string().optional(),
-  breed: z.string().optional(),
-  size_animal: z.string().optional(),
-  weight: z.string().optional(),
-  age: z.string().optional(),
+
+  // Informações do usuário
+  user: z.object({
+    id: z.number().int().min(1, 'O ID do usuário é obrigatório'),
+  }),
+
+  // Imagens
+  images: z.array(z.instanceof(File)).optional(), // Imagens são opcionais, mas devem ser um array de arquivos
 });
