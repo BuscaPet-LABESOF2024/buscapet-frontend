@@ -15,6 +15,7 @@ export const getAllAnnouncements = async (): Promise<Announcement[]> => {
 
 export const createAnnouncement = async (data: FormData): Promise<Announcement> => {
   try {
+    console.log("OPA");
     const response = await axios.post(`${API_URL}/new-adoption-announcement`, data, {
       headers: {
         'Content-Type': 'multipart/form-data', // FormData é utilizado para uploads de arquivos

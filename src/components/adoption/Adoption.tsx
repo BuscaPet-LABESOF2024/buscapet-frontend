@@ -5,9 +5,8 @@ import ErrorsMessage from '../commons/FormErrorsMessage'; // Componente de mensa
 import { adoptionSchema } from './schema'; // Validação com Zod
 import type { AdoptionFormSchema } from './type';
 import { useDropzone } from 'react-dropzone';
-import { createAnnouncement } from '../../services/AnnouncementService'; // Importando a função para criar o anúncio
+import { useCreateAdoptionAnnouncement } from '../../api/adoption/hooks'; // Hook que usa mutate para criar anúncio
 
-// Função para formatar o telefone conforme "(xx) xxxx-xxxx"
 const formatPhoneNumber = (value: string) => {
   const cleaned = value.replace(/\D/g, '');
   const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
@@ -21,6 +20,8 @@ export default function Adoption() {
   const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
   const [showErrorMessage, setShowErrorMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
+
+  const { mutate } = useCreateAdoptionAnnouncement(); // Aqui estamos usando mutate
   
   const {
     formState: { errors },
@@ -45,36 +46,39 @@ export default function Adoption() {
     },
   });
 
-  const onSubmit: SubmitHandler<AdoptionFormSchema> = async (data) => {
-    try {
-      const formData = new FormData();
-      formData.append('title', data.title);
-      formData.append('description', data.description);
-      formData.append('contact_phone', data.contact_phone);
-      
-      // Adicionando as informações do animal
-      formData.append('animal.name', data.animal.name);
-      formData.append('animal.type', data.animal.type);
-      formData.append('animal.breed', data.animal.breed);
-      formData.append('animal.size', data.animal.size);
-      formData.append('animal.weight', data.animal.weight);
-      formData.append('animal.age', data.animal.age);
-
-      // Adicionando as imagens
-      data.images?.forEach((image: File) => {
-        formData.append('images', image);
-      });
-
-      // Chame a função para criar o anúncio
-      await createAnnouncement(formData);
-      setShowSuccessMessage('Anúncio criado com sucesso!');
-      setShowErrorMessage(null);
-    } catch (error) {
-      setShowErrorMessage('Ocorreu um erro ao criar o anúncio: ' + error);
-      setShowSuccessMessage(null);
-    }
+  const onSubmit: SubmitHandler<AdoptionFormSchema> = (data) => {
+    console.log(data);
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('description', data.description);
+    formData.append('contact_phone', data.contact_phone);
+  
+    // Adicionando as informações do animal
+    formData.append('animal.name', data.animal.name);
+    formData.append('animal.type', data.animal.type);
+    formData.append('animal.breed', data.animal.breed);
+    formData.append('animal.size', data.animal.size);
+    formData.append('animal.weight', data.animal.weight);
+    formData.append('animal.age', data.animal.age);
+  
+    // Adicionando as imagens
+    data.images?.forEach((image: File) => {
+      formData.append('images', image);
+    });
+  
+    // Usar o mutate com formData
+    mutate(formData, {
+      onSuccess: () => {
+        setShowSuccessMessage('Anúncio criado com sucesso!');
+        setShowErrorMessage(null);
+      },
+      onError: (error) => {
+        setShowErrorMessage('Ocorreu um erro ao criar o anúncio: ' + error);
+        setShowSuccessMessage(null);
+      },
+    });
   };
-
+  
   const onDrop = (acceptedFiles: File[]) => {
     setValue('images', acceptedFiles);
   };
@@ -237,16 +241,15 @@ export default function Adoption() {
                   <button
                     type="button"
                     onClick={() => setCurrentStep(1)}
-                    className="bg-purple-500 text-white p-2 rounded w-full mr-2"
+                    className="bg-purple-500 text-white p-2 rounded"
                   >
                     Voltar
                   </button>
-
                   <button
                     type="submit"
-                    className="bg-purple-500 text-white p-2 rounded w-full ml-2"
+                    className="bg-green-500 text-white p-2 rounded"
                   >
-                    Cadastrar
+                    Enviar Anúncio
                   </button>
                 </div>
               </>
