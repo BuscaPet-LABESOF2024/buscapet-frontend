@@ -11,8 +11,8 @@ export const adoptionSchema = z.object({
     type: z.string().min(1, 'O tipo do animal é obrigatório'),
     breed: z.string().min(1, 'A raça é obrigatória'),
     size: z.string(),
-    weight: z.number().min(1, 'O peso é obrigatório'),
-    age: z.number().min(1, 'A idade é obrigatória'),
+    weight: z.string(),
+    age: z.string(),
   }),
 
   // Tipo de anúncio

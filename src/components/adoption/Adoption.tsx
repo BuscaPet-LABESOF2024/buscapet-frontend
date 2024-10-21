@@ -40,8 +40,8 @@ export default function Adoption() {
         type: '',
         breed: '',
         size: '',
-        weight: 0,
-        age: 0,
+        weight: '',
+        age: '',
       },
       contact_phone: '',
       images: [],
@@ -215,6 +215,9 @@ export default function Adoption() {
                     placeholder="Peso do animal aprox."
                     className="border p-2 rounded w-full"
                   />
+                  {errors.animal?.weight?.message && (
+                    <ErrorsMessage message={errors.animal.weight.message} />
+                  )}
                 </div>
 
                 <div>
@@ -227,6 +230,9 @@ export default function Adoption() {
                     placeholder="Idade do animal aprox."
                     className="border p-2 rounded w-full"
                   />
+                  {errors.animal?.age?.message && (
+                    <ErrorsMessage message={errors.animal.age.message} />
+                  )}
                 </div>
 
                 <div className="flex justify-between">
