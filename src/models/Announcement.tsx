@@ -27,7 +27,8 @@ export class Announcement {
     active: boolean;
     createdAt: string;
     updatedAt: string;
-  
+    images: Array<{ id: number; image: string | null }>; // Permitir null
+
     constructor(data: any) {
       this.id = data.id;
       this.title = data.title;
@@ -40,6 +41,6 @@ export class Announcement {
       this.active = data.active;
       this.createdAt = data.createdAt;
       this.updatedAt = data.updatedAt;
+      this.images = data.images || []; // Inicializa as imagens
     }
-  }
-  
+}
