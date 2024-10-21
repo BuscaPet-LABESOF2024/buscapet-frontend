@@ -18,8 +18,8 @@ export interface ICreateNewUser {
   password: string;
 }
 
-export function useCreateUser(payload: ICreateNewUser) {
+export function useCreateUser() {
   return useMutation({
-    mutationFn: () => UserApi.createNewUser(payload)
+    mutationFn: (payload: ICreateNewUser) => UserApi.createNewUser(payload),
   });
 }

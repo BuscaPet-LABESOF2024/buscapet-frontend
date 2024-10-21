@@ -10,7 +10,7 @@ export const UserApi = {
     return data;
   },
   async createNewUser(payload: ICreateNewUser) {
-    const { data } = await axios.post('/user', payload);
+    const { data } = await axios.post('/auth/signup', payload);
 
     return data;
   },
