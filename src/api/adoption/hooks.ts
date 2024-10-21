@@ -10,8 +10,6 @@ interface UseCreateAdoptionAnnouncementResult {
 }
 
 export const useCreateAdoptionAnnouncement = (
-  userId: number,
-  announcementTypeId: number
 ): UseCreateAdoptionAnnouncementResult => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -29,8 +27,8 @@ export const useCreateAdoptionAnnouncement = (
       formData.append('title', data.title);
       formData.append('description', data.description);
       formData.append('contact_phone', data.contact_phone);
-      formData.append('user', JSON.stringify({ id: userId }));
-      formData.append('announcementType', JSON.stringify({ id: announcementTypeId }));
+      formData.append('user', JSON.stringify({ id: 1 })); //1 p/ testes
+      formData.append('announcementType', JSON.stringify({ id: data.announcementType }));
       
       // Adicionar dados do animal
       formData.append('animal', JSON.stringify({

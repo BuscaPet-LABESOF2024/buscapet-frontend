@@ -5,26 +5,23 @@ import ErrorsMessage from '../commons/FormErrorsMessage'; // Componente de mensa
 import { adoptionSchema } from './schema'; // Validação com Zod
 import type { AdoptionFormSchema } from './type';
 import { useDropzone } from 'react-dropzone';
+import { createAnnouncement } from '../../services/AnnouncementService'; // Importando a função para criar o anúncio
 
 // Função para formatar o telefone conforme "(xx) xxxx-xxxx"
 const formatPhoneNumber = (value: string) => {
-  // Remove tudo que não for número
   const cleaned = value.replace(/\D/g, '');
-  // Aplica o formato (xx) xxxx-xxxxx
   const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
-
   if (match) {
     return `(${match[1]}) ${match[2]}-${match[3]}`;
   }
-
   return value;
 };
 
 export default function Adoption() {
   const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
   const [showErrorMessage, setShowErrorMessage] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState(1); // Estado para controlar a parte do formulário
-
+  const [currentStep, setCurrentStep] = useState(1);
+  
   const {
     formState: { errors },
     handleSubmit,
@@ -50,15 +47,33 @@ export default function Adoption() {
 
   const onSubmit: SubmitHandler<AdoptionFormSchema> = async (data) => {
     try {
-        console.log(data); // Verifique se está tudo certo aqui
+      const formData = new FormData();
+      formData.append('title', data.title);
+      formData.append('description', data.description);
+      formData.append('contact_phone', data.contact_phone);
+      
+      // Adicionando as informações do animal
+      formData.append('animal.name', data.animal.name);
+      formData.append('animal.type', data.animal.type);
+      formData.append('animal.breed', data.animal.breed);
+      formData.append('animal.size', data.animal.size);
+      formData.append('animal.weight', data.animal.weight);
+      formData.append('animal.age', data.animal.age);
+
+      // Adicionando as imagens
+      data.images?.forEach((image: File) => {
+        formData.append('images', image);
+      });
+
+      // Chame a função para criar o anúncio
+      await createAnnouncement(formData);
       setShowSuccessMessage('Anúncio criado com sucesso!');
       setShowErrorMessage(null);
     } catch (error) {
-      setShowErrorMessage('Ocorreu um erro ao criar o anúncio.' + error);
+      setShowErrorMessage('Ocorreu um erro ao criar o anúncio: ' + error);
       setShowSuccessMessage(null);
     }
   };
-  
 
   const onDrop = (acceptedFiles: File[]) => {
     setValue('images', acceptedFiles);
@@ -71,7 +86,7 @@ export default function Adoption() {
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const formattedPhone = formatPhoneNumber(event.target.value);
-    setValue('contact_phone', formattedPhone); // Atualiza o valor no estado do formulário
+    setValue('contact_phone', formattedPhone);
   };
 
   return (
@@ -93,9 +108,7 @@ export default function Adoption() {
                     placeholder="Ex: Cachorro para adoção"
                     className="border p-2 rounded w-full"
                   />
-                  {errors.title?.message && (
-                    <ErrorsMessage message={errors.title.message} />
-                  )}
+                  {errors.title?.message && <ErrorsMessage message={errors.title.message} />}
                 </div>
 
                 <div>
@@ -108,9 +121,7 @@ export default function Adoption() {
                     placeholder="Descrição geral da origem do animal, bairro encontrado, personalidade, etc..."
                     className="border p-2 rounded w-full"
                   />
-                  {errors.description?.message && (
-                    <ErrorsMessage message={errors.description.message} />
-                  )}
+                  {errors.description?.message && <ErrorsMessage message={errors.description.message} />}
                 </div>
 
                 <div>
@@ -122,20 +133,16 @@ export default function Adoption() {
                     {...register('contact_phone')}
                     placeholder="(xx) xxxx-xxxxx"
                     className="border p-2 rounded w-full"
-                    onChange={handlePhoneChange} // Formata o telefone conforme a digitação
+                    onChange={handlePhoneChange}
                   />
-                  {errors.contact_phone?.message && (
-                    <ErrorsMessage message={errors.contact_phone.message} />
-                  )}
+                  {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
                 </div>
 
                 <div {...getRootProps()} className="border-dashed border-2 p-4 text-center">
                   <input {...getInputProps()} />
                   <p>Arraste ou clique para fazer upload de fotos do animal</p>
                 </div>
-                {errors.images?.message && (
-                  <ErrorsMessage message={errors.images.message} />
-                )}
+                {errors.images?.message && <ErrorsMessage message={errors.images.message} />}
 
                 <div className="flex justify-between">
                   <button
@@ -161,9 +168,7 @@ export default function Adoption() {
                     placeholder="Nome do animal"
                     className="border p-2 rounded w-full"
                   />
-                  {errors.animal?.name?.message && (
-                    <ErrorsMessage message={errors.animal.name.message} />
-                  )}
+                  {errors.animal?.name?.message && <ErrorsMessage message={errors.animal.name.message} />}
                 </div>
 
                 <div>
@@ -195,15 +200,12 @@ export default function Adoption() {
                     Tamanho do Animal
                   </label>
                   <select {...register('animal.size')} className="border p-2 rounded w-full">
-                    <option value={1}>Pequeno</option>
-                    <option value={2}>Médio</option>
-                    <option value={3}>Grande</option>
+                    <option value="Pequeno">Pequeno</option>
+                    <option value="Médio">Médio</option>
+                    <option value="Grande">Grande</option>
                   </select>
-                  {errors.animal?.size?.message && (
-                    <ErrorsMessage message={errors.animal.size.message} />
-                  )}
+                  {errors.animal?.size?.message && <ErrorsMessage message={errors.animal.size.message} />}
                 </div>
-
 
                 <div>
                   <label htmlFor="animal.weight" className="block text-sm font-medium text-gray-700">
@@ -215,9 +217,7 @@ export default function Adoption() {
                     placeholder="Peso do animal aprox."
                     className="border p-2 rounded w-full"
                   />
-                  {errors.animal?.weight?.message && (
-                    <ErrorsMessage message={errors.animal.weight.message} />
-                  )}
+                  {errors.animal?.weight?.message && <ErrorsMessage message={errors.animal.weight.message} />}
                 </div>
 
                 <div>
@@ -230,9 +230,7 @@ export default function Adoption() {
                     placeholder="Idade do animal aprox."
                     className="border p-2 rounded w-full"
                   />
-                  {errors.animal?.age?.message && (
-                    <ErrorsMessage message={errors.animal.age.message} />
-                  )}
+                  {errors.animal?.age?.message && <ErrorsMessage message={errors.animal.age.message} />}
                 </div>
 
                 <div className="flex justify-between">
