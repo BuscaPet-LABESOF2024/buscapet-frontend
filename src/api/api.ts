@@ -2,7 +2,7 @@ import Axios, { HttpStatusCode } from 'axios';
 
 // const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080/';
 
-const serverUrl = 'http://localhost:3333/';
+const serverUrl = 'http://localhost:8080/';
 
 export const baseURL = `${serverUrl}`;
 

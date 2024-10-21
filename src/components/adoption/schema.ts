@@ -6,13 +6,12 @@ export const adoptionSchema = z.object({
 
   // Informações do animal
   animal: z.object({
-    name: z.string().min(1, 'O nome do animal é obrigatório'),
-    statusAnimal: z.number().int().min(1, 'O status do animal é obrigatório'), // Definido como 3 no form
+    name: z.string().min(1, 'O nome do animal é obrigatório'),// Definido como 3 no form
     type: z.string().min(1, 'O tipo do animal é obrigatório'),
     breed: z.string().min(1, 'A raça é obrigatória'),
-    size: z.string().min(1, 'O tamanho é obrigatório'),
-    weight: z.string().min(1, 'O peso é obrigatório'),
-    age: z.string().min(1, 'A idade é obrigatória'),
+    size: z.string(),
+    weight: z.string(),
+    age: z.string(),
   }),
 
   // Contato

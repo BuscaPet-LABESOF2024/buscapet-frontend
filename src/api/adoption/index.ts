@@ -1,8 +1,8 @@
 import axios from '../api';
-import type { AdoptionFormSchema } from '../../components/adoption/type';
+import { CreateAdoptionAnnouncementPayload } from './types';
 
 export const AdoptionApi = {
-  async createAdoption(payload: AdoptionFormSchema) {
+  async createAdoption(payload: CreateAdoptionAnnouncementPayload) {
     const { data } = await axios.post('/announcement/new-adoption-announcement', payload);
     return data;
   },
