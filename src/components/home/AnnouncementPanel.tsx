@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { getAllAnnouncements } from '../../services/AnnouncementService'; // Ajuste o caminho conforme necessário
 import { Announcement } from '../../models/Announcement'; // Ajuste o caminho conforme necessário
 import AnnouncementCard from '../../components/announcement/AnnouncementCard';
@@ -25,7 +25,7 @@ const AnnouncementPanel: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 mt-24">
+    <div className="container mx-auto p-4 mt-24 bg-gray-100 w-full max-w-7xl px-4">
       {announcements.length === 0 ? (
         <p className="text-center">Nenhum anúncio encontrado.</p>
       ) : (
@@ -37,14 +37,8 @@ const AnnouncementPanel: React.FC = () => {
               description={announcement.description}
               contactPhone={announcement.contactPhone}
               contactEmail={announcement.contactEmail}
-              animal={{
-                name: announcement.animal.name,
-                type: announcement.animal.type,
-                breed: announcement.animal.breed,
-                size: announcement.animal.size,
-                weight: announcement.animal.weight,
-                age: announcement.animal.age,
-              }}
+              // Removido o objeto animal, já que não está mais presente
+              images={announcement.images.filter(image => image.image !== null)} 
             />
           ))}
         </div>
