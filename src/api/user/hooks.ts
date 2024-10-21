@@ -15,7 +15,6 @@ export function useGetUser(payload: IGetUser) {
 export interface ICreateNewUser {
   name: string;
   email: string;
-  phone: string;
   password: string;
 }
 
