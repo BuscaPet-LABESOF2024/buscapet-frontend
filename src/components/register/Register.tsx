@@ -1,23 +1,27 @@
-import { useForm, type SubmitHandler } from 'react-hook-form';
-import type { RegisterFormSchema } from './types';
-import { registerSchema } from './schema';
+import { useCreateUser } from '@/api/user/hooks';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import ErrorsMessage from '../commons/FormErrorsMessage';
-import { useState } from 'react';
+import type { AxiosError } from 'axios';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCreateUser } from '../../api/user/hooks';
-import { AxiosError } from 'axios';
-import { Snackbar } from '@mui/material';
+import ErrorsMessage from '../commons/FormErrorsMessage';
+import { Separator } from '../ui/separator';
+import { registerSchema } from './schema';
+import type { RegisterFormSchema } from './types';
 
 export default function Register() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [openSnackbar, setOpenSnackBar] = useState(false);
-
   const navigate = useNavigate();
   const { mutateAsync: createUser } = useCreateUser();
-
-
 
   const {
     formState: { errors },
@@ -34,13 +38,16 @@ export default function Register() {
     },
   });
 
-  // const { mutate } = useCreateUser();
-
   const onSubmit: SubmitHandler<RegisterFormSchema> = async (data) => {
     const { name, email, password } = data;
 
     try {
       await createUser({ name, email, password });
+
+      toast({
+        title: 'Conta criada com sucesso!',
+        description: 'Faça login para acessar',
+      });
 
       navigate('/login');
     } catch (error) {
@@ -49,53 +56,47 @@ export default function Register() {
           type: 'manual',
           message: 'Email ja existe',
         });
-      } else {
-        setOpenSnackBar(true);
       }
-    }
 
-    // mutate({
-    //   name: data.name,
-    //   email: data.email,
-    //   password: data.password,
-    // });
+      toast({
+        title: 'Erro ao criar conta',
+        description: 'Tente novamente',
+      });
+    }
   };
 
   return (
-    <section className="bg-gray-50">
-      <div className="flex flex-col items-center justify-center px-6 py-6 gap-4 mx-auto md:h-screen lg:py-0">
-        <div className="flex items-center">
+    <div className="flex h-screen w-full items-center justify-center px-4">
+      <Card className="mx-auto max-w-xl">
+        <CardHeader>
           <Link to="/home">
-            <img
-              className="w-[6rem] h-[6rem]"
-              src="./img/logo-atual.png"
-              alt="logo"
-            />
+            <div className="flex justify-center items-center gap-1">
+              <img
+                className="w-[6rem] h-[6rem]"
+                src="./img/logo-atual.png"
+                alt="logo"
+              />
+              <h1 className="text-primary text-3xl font-bold">BuscaPet</h1>
+            </div>
           </Link>
-          <span className="text-3xl font-bold text-purple-700">BuscaPet</span>
-        </div>
-        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-xl xl:p-0">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-              Criar conta
-            </h1>
-            <form
-              className="space-y-4 md:space-y-6"
-              onSubmit={handleSubmit(onSubmit)}
-            >
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                  >
-                    Nome completo
-                  </label>
-                  <input
+          <Separator />
+          <CardTitle className="text-2xl">Cadastro</CardTitle>
+          <CardDescription>
+            Insira seus dados para criar uma conta
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid gap-4">
+              <div className='flex gap-4'>
+                <div className="grid gap-2">
+                  <Label htmlFor="name">Nome completo</Label>
+                  <Input
                     id="name"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    type="name"
                     placeholder="Fulano da Silva"
                     {...register('name')}
+                    required
                   />
                   {errors.name?.message && (
                     <ErrorsMessage
@@ -104,19 +105,14 @@ export default function Register() {
                     />
                   )}
                 </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                  >
-                    Seu e-mail
-                  </label>
-                  <input
-                    type="email"
+                <div className="grid gap-2">
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
                     id="email"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    type="email"
                     placeholder="nome@email.com"
                     {...register('email')}
+                    required
                   />
                   {errors.email?.message && (
                     <ErrorsMessage
@@ -126,94 +122,55 @@ export default function Register() {
                   )}
                 </div>
               </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  Senha
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
-                    {...register('password')}
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Senha</Label>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder='********'
+                  required
+                  {...register('password')}
+                />
+                {errors.password?.message && (
+                  <ErrorsMessage
+                    message={errors.password.message}
+                    className="mt-1"
                   />
-                  <button
-                    onClick={() => setShowPassword(!showPassword)}
-                    type="button"
-                    className="rounded-md hover:text-green-300 p-2 text-xs transition-all ease-in-out text-green-400 font-medium absolute inset-y-0 end-1"
-                  >
-                    {showPassword ? 'Hide' : 'Show'}
-                  </button>
-                </div>
-                <div className="flex gap-2">
-                  {errors.password?.message && (
-                    <ErrorsMessage
-                      message={errors.password.message}
-                      className="mt-1"
-                    />
-                  )}
-                </div>
+                )}
               </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  Confirmar senha
-                </label>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    id="confirmPassword"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    {...register('confirmPassword')}
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="confirmPassword">Confirmar senha</Label>
+                </div>
+                <Input
+                  id="confirmPassword"
+                  type="confirmPassword"
+                  placeholder='********'
+                  required
+                  {...register('confirmPassword')}
+                />
+                {errors.confirmPassword?.message && (
+                  <ErrorsMessage
+                    message={errors.confirmPassword.message}
+                    className="mt-1"
                   />
-                  {errors.confirmPassword?.message && (
-                    <ErrorsMessage
-                      message={errors.confirmPassword.message}
-                      className="mt-1"
-                    />
-                  )}
-                  <button
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    type="button"
-                    className="rounded-md hover:text-green-300 p-2 text-xs transition-all ease-in-out text-green-400 font-medium absolute inset-y-0 end-1"
-                  >
-                    {showConfirmPassword ? 'Hide' : 'Show'}
-                  </button>
-                </div>
+                )}
               </div>
-              <button
-                type="submit"
-                className="w-full text-white bg-green-400 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-              >
-                Criar conta
-              </button>
-              <p className="text-sm font-light text-gray-500 text-center">
-                Você já tem uma conta?{' '}
-                <a
-                  href="#"
-                  className="font-medium text-primary-600 hover:underline"
-                >
-                  Entre aqui
-                </a>
-              </p>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={4000}
-        onClose={() => setOpenSnackBar(false)}
-        message="Erro ao criar conta."
-      />
-    </section>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+            </div>
+            <div className="mt-4 text-center text-sm">
+              Você já tem uma conta?{' '}
+              <Link to="/login" className="underline">
+                Entre aqui
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
