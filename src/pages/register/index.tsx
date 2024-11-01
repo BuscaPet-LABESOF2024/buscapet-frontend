@@ -1,7 +1,5 @@
-import Register from '../../components/register/Register'
+import Register from '@/components/register/Register';
 
 export default function RegisterPage() {
-  return (
-    <Register />
-  )
+  return <Register />;
 }

@@ -1,22 +1,33 @@
+import { useLogin } from '@/api/auth/hook';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/providers/auth-provider/hook';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { useState } from 'react';
-import type { LoginFormSchema } from './types';
-import { loginSchema } from './schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import ErrorsMessage from '../commons/FormErrorsMessage';
 import { Link, useNavigate } from 'react-router-dom';
-import { useLogin } from '../../api/auth/hook';
-import { useAuth } from '../../providers/auth-provider/hook';
+import type { LoginFormSchema } from './types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema } from './schema';
 import type { AxiosError } from 'axios';
-import { Snackbar } from '@mui/material';
+import ErrorsMessage from '../commons/FormErrorsMessage';
+import { Separator } from '../ui/separator';
 
 export default function Login() {
   const { setToken } = useAuth();
   const navigate = useNavigate();
   const { mutateAsync: handleLogin } = useLogin();
+  const { toast } = useToast();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [openSnackbar, setOpenSnackBar] = useState(false);
+  // const [showPassword, setShowPassword] = useState(false);
+  // const [openSnackbar, setOpenSnackBar] = useState(false);
 
   const {
     formState: { errors },
@@ -37,6 +48,11 @@ export default function Login() {
     try {
       const result = await handleLogin({ email, password });
 
+      toast({
+        title: 'Login efetuado com sucesso!',
+        description: 'Seja bem-vindo!',
+      });
+
       setToken(result.token);
       navigate('/home');
     } catch (error) {
@@ -47,54 +63,45 @@ export default function Login() {
         });
       }
 
-      return (
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={4000}
-          onClose={() => setOpenSnackBar(false)}
-          message="Erro ao fazer login"
-        />
-      );
+      toast({
+        title: 'Erro ao fazer login',
+        description: 'Tente novamente mais tarde',
+      });
 
       console.error(error);
     }
   };
 
   return (
-    <section className="bg-gray-50">
-      <div className="flex flex-col items-center justify-center px-6 py-6 gap-4 mx-auto md:h-screen lg:py-0">
-        <div className="flex items-center mt-16">
+    <div className="flex h-screen w-full items-center justify-center px-4">
+      <Card className="mx-auto min-w-96">
+        <CardHeader>
           <Link to="/home">
-            <img
-              className="w-[6rem] h-[6rem]"
-              src="./img/logo-atual.png"
-              alt="logo"
-            />
+            <div className="flex justify-center items-center gap-1">
+              <img
+                className="w-[6rem] h-[6rem]"
+                src="./img/logo-atual.png"
+                alt="logo"
+              />
+              <h1 className="text-primary text-3xl font-bold">BuscaPet</h1>
+            </div>
           </Link>
-          <span className="text-3xl font-bold text-purple-700">BuscaPet</span>
-        </div>
-        <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-xl xl:p-0">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-              Entre na sua conta
-            </h1>
-
-            <form
-              className="space-y-4 md:space-y-6"
-              onSubmit={handleSubmit(onSubmit)}
-            >
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  Seu email
-                </label>
-                <input
-                  type="email"
+          <Separator />
+          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardDescription>
+            Entre com e-mail e senha para acessar
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
                   id="email"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="nome@email.com"
+                  type="email"
+                  placeholder="m@example.com"
+                  required
                   {...register('email')}
                 />
                 {errors.email?.message && (
@@ -104,67 +111,42 @@ export default function Login() {
                   />
                 )}
               </div>
-
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900"
-                >
-                  Senha
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    {...register('password')}
-                  />
-                  <button
-                    onClick={() => setShowPassword(!showPassword)}
-                    type="button"
-                    className="rounded-md hover:text-green-300 p-2 text-xs transition-all ease-in-out text-green-400 font-medium absolute inset-y-0 end-1"
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Senha</Label>
+                  <Link
+                    to={''}
+                    className="ml-auto inline-block text-sm underline"
                   >
-                    {showPassword ? 'Hide' : 'Show'}
-                  </button>
+                    Esqueceu sua senha?
+                  </Link>
                 </div>
-                <div className="flex gap-2">
-                  {errors.password?.message && (
-                    <ErrorsMessage
-                      message={errors.password.message}
-                      className="mt-1"
-                    />
-                  )}
-                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  {...register('password')}
+                />
+                {errors.password?.message && (
+                  <ErrorsMessage
+                    message={errors.password.message}
+                    className="mt-1"
+                  />
+                )}
               </div>
-
-              <div className="flex items-center justify-between">
-                <a
-                  href="#"
-                  className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:underline"
-                >
-                  Esqueceu a senha?
-                </a>
-              </div>
-              <button
-                type="submit"
-                className="w-full text-white bg-primary hover:bg-secondary focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-secondary"
-              >
-                Entrar
-              </button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Não tem uma conta?{' '}
-                <a
-                  href="#"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500 mx-1"
-                >
-                  Cadastrar-se
-                </a>
-              </p>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+            </div>
+            <div className="mt-4 text-center text-sm">
+              Não tem uma conta?{' '}
+              <Link to="/register" className="underline">
+                Cadastrar
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
