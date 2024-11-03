@@ -69,7 +69,7 @@ export default function Register() {
     <div className="flex h-screen w-full items-center justify-center px-4">
       <Card className="mx-auto max-w-xl">
         <CardHeader>
-          <Link to="/home">
+          <Link to="/">
             <div className="flex justify-center items-center gap-1">
               <img
                 className="w-[6rem] h-[6rem]"
