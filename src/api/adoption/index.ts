@@ -4,6 +4,7 @@ import { CreateAdoptionAnnouncementPayload } from './types';
 export const AdoptionApi = {
   async createAdoption(payload: CreateAdoptionAnnouncementPayload) {
     const { data } = await axios.post('/announcement/new-adoption-announcement', payload);
+    console.log('Resposta da API:', data);
     return data;
   },
 

@@ -14,9 +14,9 @@ export interface CreateAdoptionAnnouncementPayload {
       id: number;
     },
     contactPhone: string;
-    user: {
-      id: number;
-    },
-    imageAnnouncement?: string;
+    userId: number;
+    imageAnnouncement?: {
+      image: string;
+    };
   }
   
