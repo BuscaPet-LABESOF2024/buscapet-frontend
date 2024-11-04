@@ -13,16 +13,18 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-slate-100 fixed w-full top-0 left-0">
-      <div className="flex flex-wrap justify-between items-center py-2 max-w-[56.25rem] mx-auto">
+    <header className="bg-slate-100 fixed w-full top-0 left-0 z-10">
+      <div className="flex flex-row justify-between items-center py-2 max-w-[56.25rem] mx-auto">
         <Link to="/">
-          <img
-            src="./img/logo-atual.png"
-            alt="logo buscapet"
-            className="w-[5rem] h-[5rem]"
-          />
+          <div className="flex items-center mr-4">
+            <img
+              src="./img/logo-atual.png"
+              alt="logo buscapet"
+              className="w-[5rem] h-[5rem]"
+            />
+          </div>
         </Link>
-        <nav>
+        <nav className="flex items-center">
           <ul className="flex flex-wrap justify-evenly gap-6">
             <li>
               <Link to="/">Início</Link>
@@ -36,14 +38,14 @@ export default function Header() {
           </ul>
         </nav>
         {!token ? (
-          <>
+          <div className="flex items-center gap-4">
             <button className="bg-green-400 text-white px-2 py-2 rounded-md">
               <Link to="/register">Cadastro</Link>
             </button>
             <button className="bg-green-400 text-white px-4 py-2 rounded-md">
               <Link to="/login">Entrar</Link>
             </button>
-          </>
+          </div>
         ) : (
           <Button className="flex gap-2" onClick={handleLogout}>
             Sair
