@@ -1,4 +1,4 @@
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import ErrorsMessage from '../commons/FormErrorsMessage'; // Componente de mensagens de erro
@@ -18,20 +18,18 @@ const formatPhoneNumber = (value: string) => {
 };
 
 export default function Adoption() {
-  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(
-    null
-  );
+  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
   const [showErrorMessage, setShowErrorMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
 
-  const { mutateAsync: createAdoptionAnnouncement } =
-    useCreateAdoptionAnnouncement(); // Aqui estamos usando mutate
+  const { mutateAsync: createAdoptionAnnouncement } = useCreateAdoptionAnnouncement();
 
   const {
     formState: { errors },
     handleSubmit,
     register,
     setValue,
+    watch
   } = useForm<AdoptionFormSchema>({
     resolver: zodResolver(adoptionSchema),
     defaultValues: {
@@ -46,20 +44,17 @@ export default function Adoption() {
         age: '',
       },
       contact_phone: '',
-      images: [],
+      images: '',
     },
   });
 
+  const formValues = watch();
+  console.log("Form Values:", formValues);
+
   const sizesOptions = ['Selecione uma opção', 'Pequeno', 'Médio', 'Grande'];
 
-  console.log('errors -> ', errors);
-
-  const onSubmit: SubmitHandler<AdoptionFormSchema> = (data) => {
-    // // Adicionando as imagens
-    // data.images?.forEach((image: File) => {
-    //   formData.append('images', image);
-    // });
-
+  const onSubmit: SubmitHandler<AdoptionFormSchema> = async (data) => {
+    console.log('oi');
     const payload = {
       title: data.title,
       description: data.description,
@@ -74,28 +69,35 @@ export default function Adoption() {
       },
       announcementType: {
         id: 3,
+        description: 'Available for Adoption',
       },
       contactPhone: data.contact_phone,
-      user: {
-        id: 1,
-      },
+      user: 10,
+      imageAnnouncement: data.images && data.images.length > 0 ? data.images[0] : undefined,
     };
 
-    // Usar o mutate com formData
-    createAdoptionAnnouncement(payload, {
-      onSuccess: () => {
-        setShowSuccessMessage('Anúncio criado com sucesso!');
-        setShowErrorMessage(null);
-      },
-      onError: (error) => {
-        setShowErrorMessage('Ocorreu um erro ao criar o anúncio: ' + error);
-        setShowSuccessMessage(null);
-      },
-    });
+    try {
+      await createAdoptionAnnouncement(payload);
+      setShowSuccessMessage('Anúncio criado com sucesso!');
+      setShowErrorMessage(null);
+    } catch (error) {
+      setShowErrorMessage('Ocorreu um erro ao criar o anúncio: ' + error);
+      setShowSuccessMessage(null);
+    }
   };
 
   const onDrop = (acceptedFiles: File[]) => {
-    setValue('images', acceptedFiles);
+    const file = acceptedFiles[0]; // Considerando que você só está aceitando uma imagem
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          console.log('Imagem carregada:', reader.result);
+          setValue('images', reader.result as string); // Armazena como uma string
+        }
+      };
+      reader.readAsDataURL(file); // Lê o arquivo como uma URL de dados
+    }
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -121,10 +123,7 @@ export default function Adoption() {
               {currentStep === 1 && (
                 <>
                   <div>
-                    <label
-                      htmlFor="title"
-                      className="block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                       Título do Anúncio
                     </label>
                     <input
@@ -133,16 +132,11 @@ export default function Adoption() {
                       placeholder="Ex: Cachorro para adoção"
                       className="border p-2 rounded w-full"
                     />
-                    {errors.title?.message && (
-                      <ErrorsMessage message={errors.title.message} />
-                    )}
+                    {errors.title?.message && <ErrorsMessage message={errors.title.message} />}
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                       Descrição
                     </label>
                     <textarea
@@ -151,16 +145,11 @@ export default function Adoption() {
                       placeholder="Descrição geral da origem do animal, bairro encontrado, personalidade, etc..."
                       className="border p-2 rounded w-full"
                     />
-                    {errors.description?.message && (
-                      <ErrorsMessage message={errors.description.message} />
-                    )}
+                    {errors.description?.message && <ErrorsMessage message={errors.description.message} />}
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="contact_phone"
-                      className="block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="contact_phone" className="block text-sm font-medium text-gray-700">
                       Telefone de Contato
                     </label>
                     <input
@@ -170,23 +159,14 @@ export default function Adoption() {
                       className="border p-2 rounded w-full"
                       onChange={handlePhoneChange}
                     />
-                    {errors.contact_phone?.message && (
-                      <ErrorsMessage message={errors.contact_phone.message} />
-                    )}
+                    {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
                   </div>
 
-                  <div
-                    {...getRootProps()}
-                    className="border-dashed border-2 p-4 text-center"
-                  >
+                  <div {...getRootProps()} className="border-dashed border-2 p-4 text-center">
                     <input {...getInputProps()} />
-                    <p>
-                      Arraste ou clique para fazer upload de fotos do animal
-                    </p>
+                    <p>Arraste ou clique para fazer upload de fotos do animal</p>
                   </div>
-                  {errors.images?.message && (
-                    <ErrorsMessage message={errors.images.message} />
-                  )}
+                  {errors.images?.message && <ErrorsMessage message={errors.images.message} />}
 
                   <div className="flex justify-between">
                     <button
@@ -203,10 +183,7 @@ export default function Adoption() {
               {currentStep === 2 && (
                 <>
                   <div>
-                    <label
-                      htmlFor="animal.name"
-                      className="block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="animal.name" className="block text-sm font-medium text-gray-700">
                       Nome do Animal
                     </label>
                     <input
@@ -215,16 +192,11 @@ export default function Adoption() {
                       placeholder="Nome do animal"
                       className="border p-2 rounded w-full"
                     />
-                    {errors.animal?.name?.message && (
-                      <ErrorsMessage message={errors.animal.name.message} />
-                    )}
+                    {errors.animal?.name?.message && <ErrorsMessage message={errors.animal.name.message} />}
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="animal.type"
-                      className="block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="animal.type" className="block text-sm font-medium text-gray-700">
                       Tipo de Animal
                     </label>
                     <input
@@ -236,10 +208,7 @@ export default function Adoption() {
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="animal.breed"
-                      className="block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="animal.breed" className="block text-sm font-medium text-gray-700">
                       Raça
                     </label>
                     <input
@@ -251,32 +220,21 @@ export default function Adoption() {
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="animal.size"
-                      className="block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="animal.size" className="block text-sm font-medium text-gray-700">
                       Tamanho do Animal
                     </label>
-                    <select
-                      {...register('animal.size')}
-                      className="border p-2 rounded w-full"
-                    >
+                    <select {...register('animal.size')} className="border p-2 rounded w-full">
                       {sizesOptions.map((size, i) => (
-                        <option value={i} defaultValue={0}>
+                        <option key={i} value={i}>
                           {size}
                         </option>
                       ))}
                     </select>
-                    {errors.animal?.size?.message && (
-                      <ErrorsMessage message={errors.animal.size.message} />
-                    )}
+                    {errors.animal?.size?.message && <ErrorsMessage message={errors.animal.size.message} />}
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="animal.weight"
-                      className="block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="animal.weight" className="block text-sm font-medium text-gray-700">
                       Peso (kg)
                     </label>
                     <input
@@ -286,16 +244,11 @@ export default function Adoption() {
                       className="border p-2 rounded w-full"
                       type="number"
                     />
-                    {errors.animal?.weight?.message && (
-                      <ErrorsMessage message={errors.animal.weight.message} />
-                    )}
+                    {errors.animal?.weight?.message && <ErrorsMessage message={errors.animal.weight.message} />}
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="animal.age"
-                      className="block text-sm font-medium text-gray-700"
-                    >
+                    <label htmlFor="animal.age" className="block text-sm font-medium text-gray-700">
                       Idade
                     </label>
                     <input
@@ -305,38 +258,32 @@ export default function Adoption() {
                       className="border p-2 rounded w-full"
                       type="number"
                     />
-                    {errors.animal?.age?.message && (
-                      <ErrorsMessage message={errors.animal.age.message} />
-                    )}
+                    {errors.animal?.age?.message && <ErrorsMessage message={errors.animal.age.message} />}
                   </div>
 
                   <div className="flex justify-between">
                     <button
                       type="button"
                       onClick={() => setCurrentStep(1)}
-                      className="bg-purple-500 text-white p-2 rounded"
+                      className="bg-gray-500 text-white p-2 rounded w-full mr-2"
                     >
                       Voltar
                     </button>
                     <button
                       type="submit"
-                      className="bg-green-500 text-white p-2 rounded"
+                      className="bg-purple-500 text-white p-2 rounded w-full"
                     >
-                      Enviar Anúncio
+                      Criar Anúncio
                     </button>
                   </div>
                 </>
               )}
 
               {showSuccessMessage && (
-                <p className="text-green-500 mt-4 text-center">
-                  {showSuccessMessage}
-                </p>
+                <p className="text-green-500 text-center">{showSuccessMessage}</p>
               )}
               {showErrorMessage && (
-                <p className="text-red-500 mt-4 text-center">
-                  {showErrorMessage}
-                </p>
+                <p className="text-red-500 text-center">{showErrorMessage}</p>
               )}
             </form>
           </div>

@@ -37,7 +37,7 @@ const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
         ) : (
           <img 
             className="rounded-t-lg h-48 w-full object-cover" 
-            src="/path/to/default/image.jpg" // Substitua pelo caminho da imagem padrão
+            src="/img/avatarpet.png" // Substitua pelo caminho da imagem padrão
             alt="Imagem padrão"
           />
         )}
