@@ -21,7 +21,7 @@ import ErrorsMessage from '../commons/FormErrorsMessage';
 import { Separator } from '../ui/separator';
 
 export default function Login() {
-  const { setToken } = useAuth();
+  const { setToken, setUsername } = useAuth();
   const navigate = useNavigate();
   const { mutateAsync: handleLogin } = useLogin();
   const { toast } = useToast();
@@ -53,6 +53,8 @@ export default function Login() {
         description: 'Seja bem-vindo!',
       });
 
+      setUsername(result.username);
+      console.log(setUsername);
       setToken(result.token);
       navigate('/');
     } catch (error) {
