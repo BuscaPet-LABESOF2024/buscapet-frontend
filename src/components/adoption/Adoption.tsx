@@ -44,12 +44,15 @@ export default function Adoption() {
         age: '',
       },
       contact_phone: '',
-      images: '',
+      imageAnnouncement: {
+        image: ''
+      },
     },
   });
 
   const formValues = watch();
   console.log("Form Values:", formValues);
+  console.log("errors:", errors);
 
   const sizesOptions = ['Selecione uma opção', 'Pequeno', 'Médio', 'Grande'];
 
@@ -72,8 +75,8 @@ export default function Adoption() {
         description: 'Available for Adoption',
       },
       contactPhone: data.contact_phone,
-      user: 10,
-      imageAnnouncement: data.images && data.images.length > 0 ? data.images[0] : undefined,
+      userId: 10,
+      imageAnnouncement: data.imageAnnouncement || undefined,
     };
 
     try {
@@ -87,13 +90,18 @@ export default function Adoption() {
   };
 
   const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0]; // Considerando que você só está aceitando uma imagem
+    const file = acceptedFiles[0]; // Apenas aceita uma imagem
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
           console.log('Imagem carregada:', reader.result);
-          setValue('images', reader.result as string); // Armazena como uma string
+  
+          // Usando substring diretamente no resultado da leitura (reader.result)
+          const resultado = (reader.result as string).substring(23);
+  
+          // Armazena como uma string sem os primeiros 23 caracteres
+          setValue('imageAnnouncement.image', resultado);
         }
       };
       reader.readAsDataURL(file); // Lê o arquivo como uma URL de dados
@@ -166,7 +174,7 @@ export default function Adoption() {
                     <input {...getInputProps()} />
                     <p>Arraste ou clique para fazer upload de fotos do animal</p>
                   </div>
-                  {errors.images?.message && <ErrorsMessage message={errors.images.message} />}
+                  {errors.imageAnnouncement?.message && <ErrorsMessage message={errors.imageAnnouncement?.message} />}
 
                   <div className="flex justify-between">
                     <button

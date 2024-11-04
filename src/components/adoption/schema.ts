@@ -44,8 +44,7 @@ export const adoptionSchema = z.object({
   contact_phone: z.string().min(10, 'O telefone de contato é obrigatório'),
 
   // Imagens
-  images: z.string().optional(), // Aceita um array de strings (Base64) para imagens
-
-  // User ID
-  user: z.number(),
+  imageAnnouncement: z.object({
+    image: z.string()
+  }).optional(), // Aceita um array de strings (Base64) para imagens  
 });
