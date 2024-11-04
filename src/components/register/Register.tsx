@@ -88,7 +88,7 @@ export default function Register() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-4">
-              <div className='flex gap-4'>
+              <div className="flex gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="name">Nome completo</Label>
                   <Input
@@ -129,7 +129,7 @@ export default function Register() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder='********'
+                  placeholder="********"
                   required
                   {...register('password')}
                 />
@@ -146,8 +146,8 @@ export default function Register() {
                 </div>
                 <Input
                   id="confirmPassword"
-                  type="confirmPassword"
-                  placeholder='********'
+                  type="password"
+                  placeholder="********"
                   required
                   {...register('confirmPassword')}
                 />
