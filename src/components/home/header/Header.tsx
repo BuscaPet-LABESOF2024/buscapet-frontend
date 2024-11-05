@@ -2,6 +2,7 @@ import { useAuth } from '@/providers/auth-provider/hook';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Header() {
   const { token, username, setToken, setUsername } = useAuth();
@@ -39,18 +40,8 @@ export default function Header() {
         </nav>
         {!token ? (
           <div className="flex items-center gap-4">
-            <Link
-              to="/register"
-              className="bg-green-400 text-white px-2 py-2 rounded-md"
-            >
-              Cadastro
-            </Link>
-            <Link
-              to="/login"
-              className="bg-green-400 text-white px-4 py-2 rounded-md"
-            >
-              Entrar
-            </Link>
+            <Button onClick={() => navigate('/register')}>Cadastro</Button>
+            <Button onClick={() => navigate('/login')}>Login</Button>
           </div>
         ) : (
           <div className="relative">
