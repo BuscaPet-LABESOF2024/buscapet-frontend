@@ -17,7 +17,7 @@ export default function HomeSection({
     <section className={cn('', sectionClassName)}>
       <div
         className={cn(
-          'mx-auto max-w-[56.25rem] py-12 flex flex-col gap-4',
+          'mx-auto max-w-7xl py-12 flex flex-col gap-4',
           divClassName
         )}
         id={id}
