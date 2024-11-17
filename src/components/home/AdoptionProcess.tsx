@@ -125,7 +125,7 @@ export default function AdoptionProcess() {
   return (
     <section className="bg-gray-50 py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+        <h2 className="font-bold text-4xl text-center mb-8">
           Processos de Cadastro de Animais
         </h2>
         <Tabs defaultValue="adoption" className="w-full">
