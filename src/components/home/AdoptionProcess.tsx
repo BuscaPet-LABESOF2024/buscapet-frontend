@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import HomeSection from '../commons/HomeSection';
 
 function ProcessSteps({
   steps,
@@ -123,7 +124,8 @@ export default function AdoptionProcess() {
   ];
 
   return (
-    <section className="bg-gray-50 py-16">
+    <HomeSection id='register-process' sectionClassName='bg-gray-100'>
+      <section className="py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h2 className="font-bold text-4xl text-center mb-8">
           Processos de Cadastro de Animais
@@ -170,5 +172,6 @@ export default function AdoptionProcess() {
         </Tabs>
       </div>
     </section>
+    </HomeSection>
   );
 }

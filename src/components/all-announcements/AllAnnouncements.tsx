@@ -1,9 +1,8 @@
-import AnnouncementCard from '../../components/announcement/AnnouncementCard';
 import { useGetAnnouncements } from '@/api/announcement/hooks';
-import { Button } from '../ui/button';
-import HomeSection from '../commons/HomeSection';
+import AnnouncementCard from '../announcement/AnnouncementCard';
+import Header from '../home/header/Header';
 
-const AnnouncementPanel = () => {
+export default function AllAnnouncements() {
   const { data: announcements, isError, isPending } = useGetAnnouncements();
 
   if (isError) {
@@ -15,16 +14,18 @@ const AnnouncementPanel = () => {
   }
 
   return (
-    <HomeSection id='announcements' divClassName='py-8'>
+    <>
+      <Header />
       <div className="flex flex-col gap-6 container mx-auto p-4 mt-8 w-full max-w-7xl px-4">
-      <h2 className="font-bold text-4xl text-center mb-8">Últimos anúncios</h2>
-      <div>
-        {announcements.length === 0 ? (
-          <p className="text-center">Nenhum anúncio encontrado.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {announcements.map((announcement, index) =>
-              index < 4 ? (
+        <h2 className="font-bold text-4xl text-center mb-8">
+          Últimos anúncios
+        </h2>
+        <div>
+          {announcements.length === 0 ? (
+            <p className="text-center">Nenhum anúncio encontrado.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {announcements.map((announcement) => (
                 <AnnouncementCard
                   key={announcement.id}
                   title={announcement.title}
@@ -40,15 +41,11 @@ const AnnouncementPanel = () => {
                       : []
                   }
                 />
-              ) : null
-            )}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-      <Button className="w-fit self-end bg-green-400 hover:bg-green-500 mt-4">Ver mais anúncios</Button>
-    </div>
-    </HomeSection>
+    </>
   );
-};
-
-export default AnnouncementPanel;
+}

@@ -1,3 +1,4 @@
+import HomeSection from '../commons/HomeSection';
 import {
   Accordion,
   AccordionContent,
@@ -33,31 +34,32 @@ export default function FAQSection() {
   ];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mb-8 text-center">
-        <h2 className="font-bold text-4xl ">
-          Perguntas Frequentes
-        </h2>
-        <p className="mt-4 text-lg text-gray-600">
-          Encontre respostas para as dúvidas mais comuns sobre nossa plataforma.
-        </p>
-      </div>
-      <Accordion type="single" collapsible className="w-full">
-        {faqs.map((faq, index) => (
-          <AccordionItem
-            key={index}
-            value={`item-${index}`}
-            className="border-b border-gray-200 py-2"
-          >
-            <AccordionTrigger className="flex w-full items-center justify-between text-left text-lg font-medium text-gray-900 hover:no-underline">
-              {faq.question}
-            </AccordionTrigger>
-            <AccordionContent className="pt-2 text-gray-600">
-              {faq.answer}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-    </section>
+    <HomeSection id='faq' divClassName='w-full' sectionClassName='bg-gray-100'>
+      <section className="px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-8 text-center">
+          <h2 className="font-bold text-4xl ">Perguntas Frequentes</h2>
+          <p className="mt-4 text-lg text-gray-600">
+            Encontre respostas para as dúvidas mais comuns sobre nossa
+            plataforma.
+          </p>
+        </div>
+        <Accordion type="single" collapsible className="w-full">
+          {faqs.map((faq, index) => (
+            <AccordionItem
+              key={index}
+              value={`item-${index}`}
+              className="border-b border-gray-200 py-2"
+            >
+              <AccordionTrigger className="flex w-full items-center justify-between text-left text-lg font-medium text-gray-900 hover:no-underline">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 text-gray-600">
+                {faq.answer}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </section>
+    </HomeSection>
   );
 }

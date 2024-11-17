@@ -19,7 +19,7 @@ export default function Header() {
 
   return (
     <header className="bg-primary fixed w-full top-0 left-0 z-10 text-slate-50">
-      <div className="flex flex-row justify-between items-center py-2 max-w-7xl mx-auto">
+      <div className="flex flex-row justify-between items-center py-2 px-4 max-w-7xl mx-auto font-semibold">
         <div className="flex gap-4">
           <img
             src="./img/logo-atual.png"
@@ -32,10 +32,13 @@ export default function Header() {
                 <Link to="/">Início</Link>
               </li>
               <li className="hover:text-slate-200">
-                <Link to="">Buscar</Link>
+                <Link to="/all-announcements">Anúncios</Link>
               </li>
               <li className="hover:text-slate-200">
                 <Link to="/announcement-registration">Cadastrar Anúncio</Link>
+              </li>
+              <li className="hover:text-slate-200">
+                <Link to="/about">Sobre</Link>
               </li>
             </ul>
           </nav>
