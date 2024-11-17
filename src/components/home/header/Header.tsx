@@ -18,7 +18,7 @@ export default function Header() {
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   return (
-    <header className="bg-primary fixed w-full top-0 left-0 z-10 text-slate-100">
+    <header className="bg-primary fixed w-full top-0 left-0 z-10 text-slate-50">
       <div className="flex flex-row justify-between items-center py-2 max-w-7xl mx-auto">
         <div className="flex gap-4">
           <img
@@ -44,13 +44,13 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <Button
               onClick={() => navigate('/register')}
-              className="bg-slate-100 text-primary hover:bg-slate-200"
+              className="bg-slate-50 text-primary hover:bg-slate-200"
             >
               Cadastro
             </Button>
             <Button
               onClick={() => navigate('/login')}
-              className="bg-slate-100 text-primary hover:bg-slate-200"
+              className="bg-slate-50 text-primary hover:bg-slate-200"
             >
               Login
             </Button>
@@ -59,13 +59,13 @@ export default function Header() {
           <div className="relative">
             <button
               onClick={toggleDropdown}
-              className="flex items-center gap-2 rounded-md bg-slate-100 px-4 py-2 text-white transition-colors hover:bg-slate-200"
+              className="flex items-center gap-2 rounded-md bg-slate-50 px-4 py-2 text-primary transition-colors hover:bg-slate-200"
             >
               {username}
               <ChevronDown className="h-4 w-4 text-primary" />
             </button>
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 rounded-md bg-slate-100 py-1 shadow-lg">
+              <div className="absolute right-0 mt-2 w-48 rounded-md bg-slate-50 py-1 shadow-lg">
                 <Link
                   to="/profile"
                   className="block px-4 py-2 text-sm text-primary transition-colors hover:bg-slate-200"
