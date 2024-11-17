@@ -8,6 +8,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginPage } from '../pages/login';
 import AnnouncementRegistrationPage from '../pages/announcement-registration';
+import AllAnnouncementsPage from '@/pages/all-announcements';
 
 const Routes = () => {
   const { token } = useAuth();
@@ -48,6 +49,10 @@ const Routes = () => {
           path: '/announcement-registration',
           element: <AnnouncementRegistrationPage />,
         },
+        {
+          path: '/all-announcements',
+          element: <AllAnnouncementsPage />,
+        }
       ],
     },
   ];
