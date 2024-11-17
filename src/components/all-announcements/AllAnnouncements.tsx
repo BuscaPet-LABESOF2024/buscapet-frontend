@@ -1,16 +1,34 @@
-import { useGetAnnouncements } from '@/api/announcement/hooks';
-import AnnouncementCard from '../announcement/AnnouncementCard';
-import Header from '../home/header/Header';
+'use client'
+
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { AnnouncementApi, AnnouncementResponse } from '../../api/announcement'
+import AnnouncementCard from '../announcement/AnnouncementCard'
+import Header from '../home/header/Header'
+import FilterForm, { FilterFormData } from './FilterForm'
 
 export default function AllAnnouncements() {
-  const { data: announcements, isError, isPending } = useGetAnnouncements();
+  const [filters, setFilters] = useState<FilterFormData>({
+    announcementType: '',
+    neighborhood: '',
+    animalBreed: ''
+  })
+
+  const { data: announcements, isError, isPending } = useQuery<AnnouncementResponse[]>({
+    queryKey: ['announcements', filters],
+    queryFn: () => AnnouncementApi.getAnnouncementsWithFilter(filters)
+  })
+
+  const handleFilterSubmit = (formData: FilterFormData) => {
+    setFilters(formData)
+  }
 
   if (isError) {
-    return <div>Erro ao carregar os anúncios...</div>;
+    return <div>Erro ao carregar os anúncios...</div>
   }
 
   if (isPending) {
-    return <div>Carregando anúncios...</div>;
+    return <div>Carregando anúncios...</div>
   }
 
   return (
@@ -20,12 +38,13 @@ export default function AllAnnouncements() {
         <h2 className="font-bold text-4xl text-center mb-8">
           Últimos anúncios
         </h2>
+        <FilterForm onSubmit={handleFilterSubmit} />
         <div>
-          {announcements.length === 0 ? (
+          {announcements && announcements.length === 0 ? (
             <p className="text-center">Nenhum anúncio encontrado.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {announcements.map((announcement) => (
+              {announcements && announcements.map((announcement) => (
                 <AnnouncementCard
                   key={announcement.id}
                   title={announcement.title}
@@ -47,5 +66,5 @@ export default function AllAnnouncements() {
         </div>
       </div>
     </>
-  );
+  )
 }
