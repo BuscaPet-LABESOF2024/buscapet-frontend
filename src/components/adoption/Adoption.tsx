@@ -9,7 +9,6 @@ import { useDropzone } from 'react-dropzone';
 import { useCreateAdoptionAnnouncement } from '../../api/adoption/hooks'; // Hook que usa mutate para criar anúncio
 import Header from '../home/header/Header';
 import { useNavigate } from 'react-router-dom';
-import type { AxiosError } from 'axios';
 
 const formatPhoneNumber = (value: string) => {
   const cleaned = value.replace(/\D/g, '');
@@ -22,6 +21,7 @@ const formatPhoneNumber = (value: string) => {
 
 export default function Adoption() {
   const navigate = useNavigate();
+  const [imgSize, setImgSize] = useState<number>(0);
   const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
   const [showErrorMessage, setShowErrorMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
@@ -81,13 +81,23 @@ export default function Adoption() {
     };
 
     try {
+      // Validação do tamanho da imagem
+      if (imgSize > 4 * 1024 * 1024) { // 4MB em bytes
+        toast({
+          title: 'Erro ao cadastrar animal para adoção',
+          description: 'A imagem deve ter no máximo 4MB.',
+        });
+        return; // Interrompe o fluxo se a imagem for muito grande
+      }
+    
+      // Chamada para criar o anúncio
       await createAdoptionAnnouncement(payload);
-
+    
       toast({
         title: 'Animal cadastrado com sucesso!',
         description: 'Navegue pela plataforma para ver animais cadastrados',
       });
-
+    
       navigate('/');
     } catch (error) {
       toast({
@@ -95,29 +105,26 @@ export default function Adoption() {
         description: 'Tente novamente',
       });
     }
+    
   };
 
   const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0]; // Apenas aceita uma imagem
+    const file = acceptedFiles[0]; // Apenas aceita uma imagem  
     if (file) {
+  
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          console.log('Imagem carregada:', reader.result);
-
-          // Usando substring diretamente no resultado da leitura (reader.result)
           const resultado = (reader.result as string).substring(23);
-
-          // Armazena como uma string sem os primeiros 23 caracteres
           setValue('imageAnnouncement.image', resultado);
+          setSelectedFileName(file.name); // Atualiza o nome do arquivo
+          setImgSize(file.size); // Atualiza o estado com o tamanho do arquivo
         }
       };
       reader.readAsDataURL(file); // Lê o arquivo como uma URL de dados
-
-      // Atualiza o nome do arquivo selecionado
-      setSelectedFileName(file.name); // Armazena o nome do arquivo
     }
   };
+  
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: { 'image/*': [] },
@@ -185,7 +192,7 @@ export default function Adoption() {
                     <input {...getInputProps()} />
                     <p>Arraste ou clique para fazer upload de fotos do animal</p>
                   </div>
-                  {selectedFileName && <p className="mt-2 text-gray-700">Imagem selecionada: {selectedFileName}</p>} {/* Exibe o nome do arquivo */}
+                  {selectedFileName && <p className="mt-2 text-gray-400 text-center"> {selectedFileName}</p>} {/* Exibe o nome do arquivo */}
                   {errors.imageAnnouncement?.message && <ErrorsMessage message={errors.imageAnnouncement?.message} />}
 
                   <div className="flex justify-between">
