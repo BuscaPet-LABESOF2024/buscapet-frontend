@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../home/header/Header';
-import Footer from '../home/Footer';
 
 export default function AnnouncementRegistration() {
   const [hoverSection, setHoverSection] = useState<string | null>(null);
@@ -101,7 +100,6 @@ export default function AnnouncementRegistration() {
           )}
         </div>
       </div>
-      <Footer />
     </>
   );
 }
