@@ -8,6 +8,8 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginPage } from '../pages/login';
 import AnnouncementRegistrationPage from '../pages/announcement-registration';
+import { ProfilePage } from '@/pages/profile-page';
+import MyAnnoucementsPage from '@/pages/my-annoucements';
 import AllAnnouncementsPage from '@/pages/all-announcements';
 
 const Routes = () => {
@@ -50,16 +52,22 @@ const Routes = () => {
           element: <AnnouncementRegistrationPage />,
         },
         {
+          path: '/profile',
+          element: <ProfilePage />,
+        },
+        {
+          path: '/my-announcements',
+          element: <MyAnnoucementsPage />,
+        },
+        {
           path: '/all-announcements',
           element: <AllAnnouncementsPage />,
-        }
+        },
       ],
     },
   ];
 
-  const routesForNotAuthenticatedOnly = [
-    {}
-  ];
+  const routesForNotAuthenticatedOnly = [{}];
 
   const router = createBrowserRouter([
     ...routesForPublic,
