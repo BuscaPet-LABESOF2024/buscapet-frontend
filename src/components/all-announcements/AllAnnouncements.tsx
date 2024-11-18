@@ -6,6 +6,7 @@ import { AnnouncementApi, AnnouncementResponse } from '../../api/announcement'
 import AnnouncementCard from '../announcement/AnnouncementCard'
 import Header from '../home/header/Header'
 import FilterForm, { FilterFormData } from './FilterForm'
+import Footer from '../home/Footer'
 
 export default function AllAnnouncements() {
   const [filters, setFilters] = useState<FilterFormData>({
@@ -65,6 +66,7 @@ export default function AllAnnouncements() {
           )}
         </div>
       </div>
+      <Footer />
     </>
   )
 }
