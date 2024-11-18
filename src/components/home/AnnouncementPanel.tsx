@@ -2,9 +2,12 @@ import AnnouncementCard from '../../components/announcement/AnnouncementCard';
 import { useGetAnnouncements } from '@/api/announcement/hooks';
 import { Button } from '../ui/button';
 import HomeSection from '../commons/HomeSection';
+import { useNavigate } from 'react-router-dom';
+
 
 const AnnouncementPanel = () => {
   const { data: announcements, isError, isPending } = useGetAnnouncements();
+  const navigate = useNavigate();
 
   if (isError) {
     return <div>Erro ao carregar os anúncios...</div>;
@@ -45,7 +48,7 @@ const AnnouncementPanel = () => {
           </div>
         )}
       </div>
-      <Button className="w-fit self-end bg-green-400 hover:bg-green-500 mt-4">Ver mais anúncios</Button>
+      <Button onClick={() => navigate('/all-announcements')} className="w-fit self-end bg-green-400 hover:bg-green-500 mt-4">Ver mais anúncios</Button>
     </div>
     </HomeSection>
   );
