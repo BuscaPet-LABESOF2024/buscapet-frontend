@@ -1,5 +1,6 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import ErrorsMessage from '../commons/FormErrorsMessage'; // Componente de mensagens de erro
 import { adoptionSchema } from './schema'; // Validação com Zod
@@ -7,6 +8,8 @@ import type { AdoptionFormSchema } from './type';
 import { useDropzone } from 'react-dropzone';
 import { useCreateAdoptionAnnouncement } from '../../api/adoption/hooks'; // Hook que usa mutate para criar anúncio
 import Header from '../home/header/Header';
+import { useNavigate } from 'react-router-dom';
+import type { AxiosError } from 'axios';
 
 const formatPhoneNumber = (value: string) => {
   const cleaned = value.replace(/\D/g, '');
@@ -18,9 +21,11 @@ const formatPhoneNumber = (value: string) => {
 };
 
 export default function Adoption() {
+  const navigate = useNavigate();
   const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
   const [showErrorMessage, setShowErrorMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null); // Novo estado para armazenar o nome do arquivo
 
   const { mutateAsync: createAdoptionAnnouncement } = useCreateAdoptionAnnouncement();
 
@@ -29,7 +34,7 @@ export default function Adoption() {
     handleSubmit,
     register,
     setValue,
-    watch
+    setError
   } = useForm<AdoptionFormSchema>({
     resolver: zodResolver(adoptionSchema),
     defaultValues: {
@@ -50,14 +55,10 @@ export default function Adoption() {
     },
   });
 
-  const formValues = watch();
-  console.log("Form Values:", formValues);
-  console.log("errors:", errors);
-
   const sizesOptions = ['Selecione uma opção', 'Pequeno', 'Médio', 'Grande'];
 
   const onSubmit: SubmitHandler<AdoptionFormSchema> = async (data) => {
-    console.log('oi');
+
     const payload = {
       title: data.title,
       description: data.description,
@@ -81,11 +82,18 @@ export default function Adoption() {
 
     try {
       await createAdoptionAnnouncement(payload);
-      setShowSuccessMessage('Anúncio criado com sucesso!');
-      setShowErrorMessage(null);
+
+      toast({
+        title: 'Animal cadastrado com sucesso!',
+        description: 'Navegue pela plataforma para ver animais cadastrados',
+      });
+
+      navigate('/');
     } catch (error) {
-      setShowErrorMessage('Ocorreu um erro ao criar o anúncio: ' + error);
-      setShowSuccessMessage(null);
+      toast({
+        title: 'Erro ao cadastrar animal para adoção',
+        description: 'Tente novamente',
+      });
     }
   };
 
@@ -96,15 +104,18 @@ export default function Adoption() {
       reader.onloadend = () => {
         if (reader.result) {
           console.log('Imagem carregada:', reader.result);
-  
+
           // Usando substring diretamente no resultado da leitura (reader.result)
           const resultado = (reader.result as string).substring(23);
-  
+
           // Armazena como uma string sem os primeiros 23 caracteres
           setValue('imageAnnouncement.image', resultado);
         }
       };
       reader.readAsDataURL(file); // Lê o arquivo como uma URL de dados
+
+      // Atualiza o nome do arquivo selecionado
+      setSelectedFileName(file.name); // Armazena o nome do arquivo
     }
   };
 
@@ -165,7 +176,7 @@ export default function Adoption() {
                       {...register('contact_phone')}
                       placeholder="(xx) xxxx-xxxxx"
                       className="border p-2 rounded w-full"
-                      onChange={handlePhoneChange}
+                      onChange={handlePhoneChange} // Aplica a formatação quando o valor mudar
                     />
                     {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
                   </div>
@@ -174,6 +185,7 @@ export default function Adoption() {
                     <input {...getInputProps()} />
                     <p>Arraste ou clique para fazer upload de fotos do animal</p>
                   </div>
+                  {selectedFileName && <p className="mt-2 text-gray-700">Imagem selecionada: {selectedFileName}</p>} {/* Exibe o nome do arquivo */}
                   {errors.imageAnnouncement?.message && <ErrorsMessage message={errors.imageAnnouncement?.message} />}
 
                   <div className="flex justify-between">
@@ -241,39 +253,11 @@ export default function Adoption() {
                     {errors.animal?.size?.message && <ErrorsMessage message={errors.animal.size.message} />}
                   </div>
 
-                  <div>
-                    <label htmlFor="animal.weight" className="block text-sm font-medium text-gray-700">
-                      Peso (kg)
-                    </label>
-                    <input
-                      id="animal.weight"
-                      {...register('animal.weight')}
-                      placeholder="Peso do animal aprox."
-                      className="border p-2 rounded w-full"
-                      type="number"
-                    />
-                    {errors.animal?.weight?.message && <ErrorsMessage message={errors.animal.weight.message} />}
-                  </div>
-
-                  <div>
-                    <label htmlFor="animal.age" className="block text-sm font-medium text-gray-700">
-                      Idade
-                    </label>
-                    <input
-                      id="animal.age"
-                      {...register('animal.age')}
-                      placeholder="Idade do animal aprox."
-                      className="border p-2 rounded w-full"
-                      type="number"
-                    />
-                    {errors.animal?.age?.message && <ErrorsMessage message={errors.animal.age.message} />}
-                  </div>
-
                   <div className="flex justify-between">
                     <button
                       type="button"
                       onClick={() => setCurrentStep(1)}
-                      className="bg-gray-500 text-white p-2 rounded w-full mr-2"
+                      className="bg-gray-300 text-gray-700 p-2 rounded w-full"
                     >
                       Voltar
                     </button>
@@ -286,14 +270,18 @@ export default function Adoption() {
                   </div>
                 </>
               )}
-
-              {showSuccessMessage && (
-                <p className="text-green-500 text-center">{showSuccessMessage}</p>
-              )}
-              {showErrorMessage && (
-                <p className="text-red-500 text-center">{showErrorMessage}</p>
-              )}
             </form>
+
+            {showSuccessMessage && (
+              <div className="bg-green-100 text-green-800 p-3 rounded mt-4">
+                {showSuccessMessage}
+              </div>
+            )}
+            {showErrorMessage && (
+              <div className="bg-red-100 text-red-800 p-3 rounded mt-4">
+                {showErrorMessage}
+              </div>
+            )}
           </div>
         </div>
       </section>
