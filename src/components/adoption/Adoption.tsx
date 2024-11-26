@@ -6,9 +6,9 @@ import ErrorsMessage from '../commons/FormErrorsMessage'; // Componente de mensa
 import { adoptionSchema } from './schema'; // Validação com Zod
 import type { AdoptionFormSchema } from './type';
 import { useDropzone } from 'react-dropzone';
-import { useCreateAdoptionAnnouncement } from '../../api/adoption/hooks'; // Hook que usa mutate para criar anúncio
 import Header from '../home/header/Header';
 import { useNavigate } from 'react-router-dom';
+import { useCreateAdoptionAnnouncement } from '@/api/announcement/hooks';
 
 const formatPhoneNumber = (value: string) => {
   const cleaned = value.replace(/\D/g, '');
