@@ -1,12 +1,11 @@
 import AnnouncementCard from '../../components/announcement/AnnouncementCard';
-import { useGetAnnouncements } from '@/api/announcement/hooks';
+import { useGetLastAnnouncements } from '@/api/announcement/hooks';
 import { Button } from '../ui/button';
 import HomeSection from '../commons/HomeSection';
 import { useNavigate } from 'react-router-dom';
 
-
 const AnnouncementPanel = () => {
-  const { data: announcements, isError, isPending } = useGetAnnouncements();
+  const { data: announcements, isError, isPending } = useGetLastAnnouncements();
   const navigate = useNavigate();
 
   if (isError) {
@@ -18,38 +17,47 @@ const AnnouncementPanel = () => {
   }
 
   return (
-    <HomeSection id='announcements' divClassName='py-8'>
+    <HomeSection id="announcements" divClassName="py-8">
       <div className="flex flex-col gap-6 container mx-auto p-4 mt-8 w-full max-w-7xl px-4">
-      <h2 className="font-bold text-4xl text-center mb-8">Últimos anúncios</h2>
-      <div>
-        {announcements.length === 0 ? (
-          <p className="text-center">Nenhum anúncio encontrado.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {announcements.map((announcement, index) =>
-              index < 4 ? (
-                <AnnouncementCard
-                  key={announcement.id}
-                  title={announcement.title}
-                  description={announcement.description}
-                  contactPhone={announcement.contactPhone}
-                  contactEmail={announcement.contactEmail}
-                  animal={announcement.animal}
-                  images={
-                    announcement.images
-                      ? announcement.images.filter(
-                          (image) => image.image !== null
-                        )
-                      : []
-                  }
-                />
-              ) : null
-            )}
-          </div>
+        <h2 className="font-bold text-4xl text-center mb-8">
+          Últimos anúncios
+        </h2>
+        <div>
+          {announcements.length === 0 ? (
+            <p className="text-center">Nenhum anúncio encontrado.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {announcements.map((announcement, index) =>
+                index < 4 ? (
+                  <AnnouncementCard
+                    key={announcement.id}
+                    title={announcement.title}
+                    description={announcement.description}
+                    contactPhone={announcement.contactPhone}
+                    contactEmail={announcement.contactEmail}
+                    animal={announcement.animal}
+                    images={
+                      announcement.images
+                        ? announcement.images.filter(
+                            (image) => image.image !== null
+                          )
+                        : []
+                    }
+                  />
+                ) : null
+              )}
+            </div>
+          )}
+        </div>
+        {announcements.length > 0 && (
+          <Button
+            onClick={() => navigate('/all-announcements')}
+            className="w-fit self-end bg-green-400 hover:bg-green-500 mt-4"
+          >
+            Ver mais anúncios
+          </Button>
         )}
       </div>
-      <Button onClick={() => navigate('/all-announcements')} className="w-fit self-end bg-green-400 hover:bg-green-500 mt-4">Ver mais anúncios</Button>
-    </div>
     </HomeSection>
   );
 };

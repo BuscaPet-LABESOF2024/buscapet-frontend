@@ -1,35 +1,35 @@
-'use client'
-
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { AnnouncementApi, AnnouncementResponse } from '../../api/announcement'
-import AnnouncementCard from '../announcement/AnnouncementCard'
-import Header from '../home/header/Header'
-import FilterForm, { FilterFormData } from './FilterForm'
-import Footer from '../home/Footer'
+import AnnouncementCard from '../announcement/AnnouncementCard';
+import Header from '../home/header/Header';
+import FilterForm from './FilterForm';
+import Footer from '../home/Footer';
+import type { FilterFormSchemaType } from './types';
+import { useGetAnnouncementsWithFilter } from '@/api/announcement/hooks';
+import { useState } from 'react';
 
 export default function AllAnnouncements() {
-  const [filters, setFilters] = useState<FilterFormData>({
-    announcementType: '',
+  const [filters, setFilters] = useState<FilterFormSchemaType>({
+    announcementType: undefined,
     neighborhood: '',
-    animalBreed: ''
-  })
+    animalBreed: '',
+  });
 
-  const { data: announcements, isError, isPending } = useQuery<AnnouncementResponse[]>({
-    queryKey: ['announcements', filters],
-    queryFn: () => AnnouncementApi.getAnnouncementsWithFilter(filters)
-  })
+  const {
+    data: announcements,
+    isError,
+    isPending,
+  } = useGetAnnouncementsWithFilter(filters);
 
-  const handleFilterSubmit = (formData: FilterFormData) => {
-    setFilters(formData)
-  }
+  const handleFilterSubmit = (formData: FilterFormSchemaType) => {
+    console.log('formData - > ', formData);
+    setFilters(formData);
+  };
 
   if (isError) {
-    return <div>Erro ao carregar os anúncios...</div>
+    return <div>Erro ao carregar os anúncios...</div>;
   }
 
   if (isPending) {
-    return <div>Carregando anúncios...</div>
+    return <div>Carregando anúncios...</div>;
   }
 
   return (
@@ -45,28 +45,29 @@ export default function AllAnnouncements() {
             <p className="text-center">Nenhum anúncio encontrado.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {announcements && announcements.map((announcement) => (
-                <AnnouncementCard
-                  key={announcement.id}
-                  title={announcement.title}
-                  description={announcement.description}
-                  contactPhone={announcement.contactPhone}
-                  contactEmail={announcement.contactEmail}
-                  animal={announcement.animal}
-                  images={
-                    announcement.images
-                      ? announcement.images.filter(
-                          (image) => image.image !== null
-                        )
-                      : []
-                  }
-                />
-              ))}
+              {announcements &&
+                announcements.map((announcement) => (
+                  <AnnouncementCard
+                    key={announcement.id}
+                    title={announcement.title}
+                    description={announcement.description}
+                    contactPhone={announcement.contactPhone}
+                    contactEmail={announcement.contactEmail}
+                    animal={announcement.animal}
+                    images={
+                      announcement.images
+                        ? announcement.images.filter(
+                            (image) => image.image !== null
+                          )
+                        : []
+                    }
+                  />
+                ))}
             </div>
           )}
         </div>
       </div>
       <Footer />
     </>
-  )
+  );
 }
