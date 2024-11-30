@@ -7,3 +7,10 @@ export function useGetAnnouncements() {
     queryFn: () => AnnouncementApi.getAnnouncements(),
   });
 }
+
+export function useGetMyAnnouncements() {
+  return useQuery({
+    queryKey: ['myAnnouncements'],
+    queryFn: () => AnnouncementApi.getMyAnnouncements(),
+  });
+}

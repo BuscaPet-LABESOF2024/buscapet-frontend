@@ -12,6 +12,10 @@ export const AnnouncementApi = {
     const { data } = await axios.get('/announcement/all-announcement')
     return data
   },
+  async getMyAnnouncements(): Promise<AnnouncementResponse[]> {
+    const { data } = await axios.get('/announcement/my-announcements')
+    return data
+  },
 }
 
 export interface AnnouncementResponse {
