@@ -3,12 +3,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import ErrorsMessage from '../commons/FormErrorsMessage';
-import { LostSchema } from './schema';
-import type { LostAnimalFormSchema } from './type';
+import { FoundSchema } from './schema';
+import type { FoundAnimalFormSchema } from './type';
 import { toast } from '@/hooks/use-toast';
 import Header from '../home/header/Header';
 import { useNavigate } from 'react-router-dom';
-import { useCreateLostAnnouncement } from '../../api/lost-animal/hooks'; 
+import { useCreateFoundAnnouncement } from '../../api/found-animal/hooks'; 
 import { useSearchCep } from '../../api/search-address/hooks'; // Importe o hook
 
 const formatPhoneNumber = (value: string) => {
@@ -20,7 +20,7 @@ const formatPhoneNumber = (value: string) => {
   return value;
 };
 
-export default function LostAnimal() {
+export default function FoundAnimal() {
   const navigate = useNavigate();
   const [imgSize, setImgSize] = useState<number>(0);
   const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
@@ -28,7 +28,7 @@ export default function LostAnimal() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null); // Novo estado para armazenar o nome do arquivo
   const { searchCep } = useSearchCep();
-  const { mutateAsync: createLostAnnouncement } = useCreateLostAnnouncement();
+  const { mutateAsync: createFoundAnnouncement } = useCreateFoundAnnouncement();
 
   const {
     formState: { errors },
@@ -37,8 +37,8 @@ export default function LostAnimal() {
     setValue,
     setError,
     clearErrors
-  } = useForm<LostAnimalFormSchema>({
-    resolver: zodResolver(LostSchema),
+  } = useForm<FoundAnimalFormSchema>({
+    resolver: zodResolver(FoundSchema),
     defaultValues: {
       title: '',
       description: '',
@@ -103,7 +103,7 @@ export default function LostAnimal() {
   };
   
 
-  const onSubmit: SubmitHandler<LostAnimalFormSchema> = async (data) => {
+  const onSubmit: SubmitHandler<FoundAnimalFormSchema> = async (data) => {
 
     const payload = {
       title: data.title,
@@ -118,8 +118,8 @@ export default function LostAnimal() {
         age: Number(data.animal.age),
       },
       announcementType: {
-        id: 1,
-        description: 'Lost',
+        id: 2,
+        description: 'Found',
       },
       contactPhone: data.contact_phone,
       userId: 10,
@@ -142,7 +142,7 @@ export default function LostAnimal() {
         return; // Interrompe o fluxo se a imagem for muito grande
       }
 
-      await createLostAnnouncement(payload);
+      await createFoundAnnouncement(payload);
     
       toast({
         title: 'Animal cadastrado com sucesso!',
@@ -194,7 +194,7 @@ export default function LostAnimal() {
         <div className="flex justify-center items-center min-h-screen">
           <div className="w-full max-w-xl bg-gray-100 p-8 rounded-lg shadow-lg mt-7">
             <h1 className="text-2xl font-bold mb-6 text-center">
-              Cadastro de Animal Desaparecido
+              Cadastro de Animal Encontrado
             </h1>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {currentStep === 1 && (
@@ -313,7 +313,7 @@ export default function LostAnimal() {
 
                   <div>
                     <label htmlFor="data" className="block text-sm font-medium text-gray-700">
-                      Data de desaparecimento
+                      Data que o animal foi encontrado
                     </label>
                     <input type="datetime-local"
                       id="data"
@@ -325,7 +325,7 @@ export default function LostAnimal() {
 
                   <div>
                     <label htmlFor="address.cep" className="block text-sm font-medium text-gray-700">
-                      CEP aproximado do local de desaparecimento
+                      CEP aproximado do local de encontro
                     </label>
                     <input
                       id="address.cep"

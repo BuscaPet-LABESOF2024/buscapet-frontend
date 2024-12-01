@@ -29,6 +29,8 @@ export default function AnnouncementRegistration() {
       navigate('/lost-animal');
     } else if (section === 'adoção') {
       navigate('/adoption');
+    } else if (section === 'encontrado') {
+      navigate('/found-animal');
     }
   };
 
@@ -82,6 +84,7 @@ export default function AnnouncementRegistration() {
           className="relative group bg-cover bg-center bg-[url('/img/animal-encontrado.jpg')] flex items-center justify-center text-white text-xl font-bold cursor-pointer transition-all duration-300"
           onMouseEnter={() => setHoverSection('encontrado')}
           onMouseLeave={() => setHoverSection(null)}
+          onClick={() => handleClick('encontrado')}
         >
           <div className="absolute inset-0 bg-black bg-opacity-70 hover:bg-opacity-0 hover:text-transparent flex items-center justify-center transition-all duration-300">
             <span className='text-2xl'>Cadastrar Animal Encontrado</span>
