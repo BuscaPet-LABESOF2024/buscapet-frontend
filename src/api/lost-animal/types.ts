@@ -1,12 +1,6 @@
 export interface CreateLostAnnouncementPayload {
     title: string;
     description: string;
-    endereco: {
-      rua: string;
-      number: number;
-      neighborhood: string;
-      cep: string;
-    };
     animal: {
       name: string;
       statusAnimal: number;
@@ -24,5 +18,12 @@ export interface CreateLostAnnouncementPayload {
     imageAnnouncement?: {
       image: string;
     };
+    address: {
+      street: string;
+      number: number;
+      neighborhod: string;
+      cep: string;
+    };
+    data: Date
   }
   

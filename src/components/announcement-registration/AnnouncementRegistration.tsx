@@ -26,7 +26,7 @@ export default function AnnouncementRegistration() {
 
   const handleClick = (section: string) => {
     if (section === 'desaparecido') {
-      navigate('/missing-animal');
+      navigate('/lost-animal');
     } else if (section === 'adoção') {
       navigate('/adoption');
     }
