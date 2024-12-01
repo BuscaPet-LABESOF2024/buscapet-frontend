@@ -1,17 +1,17 @@
-import axios from '../api'
+import api from '../api'
 
 export const fetchAnnouncementTypes = async () => {
-  const { data } = await axios.get('/announcement/types')
+  const { data } = await api.get('/announcement/types')
   return data
 }
 
 export const fetchNeighborhoods = async () => {
-  const { data } = await axios.get('/address/neighborhoods')
+  const { data } = await api.get('/address/neighborhoods')
   return data
 }
 
 export const fetchBreeds = async () => {
-  const { data } = await axios.get('/animal/breeds')
+  const { data } = await api.get('/animal/breeds')
   return data
 }
 

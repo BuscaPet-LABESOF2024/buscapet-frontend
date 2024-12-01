@@ -1,4 +1,4 @@
 import { z } from 'zod';
-import { missingAnimalSchema } from './schema';
+import { LostAnimalSchema } from './schema';
 
-export type MissingAnimalFormSchema = z.infer<typeof missingAnimalSchema>;
+export type MissingAnimalFormSchema = z.infer<typeof LostAnimalSchema>;
