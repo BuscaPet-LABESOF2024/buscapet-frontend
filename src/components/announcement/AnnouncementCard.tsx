@@ -1,8 +1,15 @@
 import React from 'react';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../ui/card';
 
 interface AnnouncementCardProps {
+  id: number;
   title: string;
   description: string;
   contactPhone: string;
@@ -16,14 +23,17 @@ interface AnnouncementCardProps {
     age: number;
   };
   images: Array<{ id: number; image: string | null }>;
+  onViewDetails: (id: number) => void; // Callback para o evento de clique
 }
 
 const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
+  id,
   title,
   description,
   contactPhone,
   contactEmail,
   images,
+  onViewDetails,
 }) => {
   return (
     <Card>
@@ -51,7 +61,7 @@ const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
         <p className="text-xs text-gray-500">Email: {contactEmail}</p>
       </CardContent>
       <CardFooter>
-        <Button>Ver detalhes</Button>
+        <Button onClick={() => onViewDetails(id)}>Ver detalhes</Button>
       </CardFooter>
     </Card>
   );
