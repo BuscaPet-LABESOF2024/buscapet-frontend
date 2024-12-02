@@ -6,12 +6,16 @@ import type { FilterFormSchemaType } from './types';
 import { useGetAnnouncementsWithFilter } from '@/api/announcement/hooks';
 import { useState } from 'react';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
+import { fetchAnnouncementDetails } from '@/api/announcement';
+import { useNavigate } from 'react-router-dom';
 
 export default function AllAnnouncements() {
   const [filters, setFilters] = useState<FilterFormSchemaType>({
     announcementType: '',
     animalSize: '',
   });
+
+  const navigate = useNavigate();
 
   const {
     data: announcements,
@@ -23,6 +27,21 @@ export default function AllAnnouncements() {
 
   const handleFilterSubmit = (formData: FilterFormSchemaType) => {
     setFilters(formData);
+  };
+
+  const handleViewDetails = async (id: number) => {
+    console.log(id);
+    try {
+      // Chama o backend para buscar os detalhes do anúncio
+      const announcementDetails = await fetchAnnouncementDetails(id);
+
+      // Navega para a página de detalhes e passa os dados como estado
+      navigate(`/announcement-details/${id}`, {
+        state: { announcementDetails },
+      });
+    } catch (error) {
+      console.error('Erro ao buscar os detalhes do anúncio:', error);
+    }
   };
 
   if (isError) {
@@ -54,6 +73,7 @@ export default function AllAnnouncements() {
                 announcements.map((announcement) => (
                   <AnnouncementCard
                     key={announcement.id}
+                    id={announcement.id} // Passa o id do anúncio
                     title={announcement.title}
                     description={announcement.description}
                     contactPhone={announcement.contactPhone}
@@ -66,6 +86,7 @@ export default function AllAnnouncements() {
                           )
                         : []
                     }
+                    onViewDetails={handleViewDetails}
                   />
                 ))}
             </div>

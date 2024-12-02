@@ -3,10 +3,26 @@ import { useGetLastAnnouncements } from '@/api/announcement/hooks';
 import { Button } from '../ui/button';
 import HomeSection from '../commons/HomeSection';
 import { useNavigate } from 'react-router-dom';
+import { fetchAnnouncementDetails } from '@/api/announcement';
 
 const AnnouncementPanel = () => {
   const { data: announcements, isError, isPending } = useGetLastAnnouncements();
   const navigate = useNavigate();
+
+  const handleViewDetails = async (id: number) => {
+    console.log(id);
+    try {
+      // Chama o backend para buscar os detalhes do anúncio
+      const announcementDetails = await fetchAnnouncementDetails(id);
+
+      // Navega para a página de detalhes e passa os dados como estado
+      navigate(`/announcement-details/${id}`, {
+        state: { announcementDetails },
+      });
+    } catch (error) {
+      console.error('Erro ao buscar os detalhes do anúncio:', error);
+    }
+  };
 
   if (isError) {
     return <div>Erro ao carregar os anúncios...</div>;
@@ -31,6 +47,7 @@ const AnnouncementPanel = () => {
                 index < 4 ? (
                   <AnnouncementCard
                     key={announcement.id}
+                    id={announcement.id} // Passa o id do anúncio
                     title={announcement.title}
                     description={announcement.description}
                     contactPhone={announcement.contactPhone}
@@ -43,6 +60,7 @@ const AnnouncementPanel = () => {
                           )
                         : []
                     }
+                    onViewDetails={handleViewDetails}
                   />
                 ) : null
               )}

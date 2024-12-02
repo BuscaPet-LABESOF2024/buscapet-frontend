@@ -70,3 +70,69 @@ interface ImagesResponse {
   id: number;
   image: string | null;
 }
+
+export enum AnimalSize {
+  Small = 1,
+  Medium = 2,
+  Large = 3,
+}
+
+export enum AnnouncementType {
+  Lost = 1,
+  Found = 2,
+  Adoption = 3,
+}
+
+// Interface genérica para os detalhes de um anuncio
+export interface IAnnouncementDetailsBase {
+  title: string;
+  description: string;
+  contactPhone: string;
+  contactEmail: string;
+  images: ImagesResponse[];
+  announcementType: AnnouncementType;
+  active: boolean;
+  address: {
+    street: string;
+    neighborhood?: string;
+    reference?: string;
+    complemento?: string;
+  };
+}
+
+export interface IAdoptionAnnouncementDetails extends IAnnouncementDetailsBase {
+  animal: {
+    name: string;
+    type: string;
+    breed: string;
+    size: AnimalSize;
+    weight: number;
+    age: number;
+  };
+}
+
+export interface IMissingOrFoundAnnouncementDetails
+  extends IAnnouncementDetailsBase {
+  animal: {
+    name: string;
+    type: string;
+    breed: string;
+    size: AnimalSize;
+  };
+}
+
+export type AnnouncementDetails =
+  | IAdoptionAnnouncementDetails
+  | IMissingOrFoundAnnouncementDetails;
+
+export const fetchAnnouncementDetails = async (
+  id: number
+): Promise<AnnouncementDetails> => {
+  try {
+    const response = await axios.get(`/announcement/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar os detalhes do anúncio:', error);
+    throw error;
+  }
+};
