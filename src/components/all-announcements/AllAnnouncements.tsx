@@ -1,23 +1,18 @@
-'use client';
-
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom'; // Ou outro método de navegação
-import {
-  AnnouncementApi,
-  AnnouncementResponse,
-  fetchAnnouncementDetails,
-} from '../../api/announcement';
 import AnnouncementCard from '../announcement/AnnouncementCard';
 import Header from '../home/header/Header';
-import FilterForm, { FilterFormData } from './FilterForm';
+import FilterForm from './FilterForm';
 import Footer from '../home/Footer';
+import type { FilterFormSchemaType } from './types';
+import { useGetAnnouncementsWithFilter } from '@/api/announcement/hooks';
+import { useState } from 'react';
+import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
+import { fetchAnnouncementDetails } from '@/api/announcement';
+import { useNavigate } from 'react-router-dom';
 
 export default function AllAnnouncements() {
-  const [filters, setFilters] = useState<FilterFormData>({
+  const [filters, setFilters] = useState<FilterFormSchemaType>({
     announcementType: '',
-    neighborhood: '',
-    animalBreed: '',
+    animalSize: '',
   });
 
   const navigate = useNavigate();
@@ -26,12 +21,11 @@ export default function AllAnnouncements() {
     data: announcements,
     isError,
     isPending,
-  } = useQuery<AnnouncementResponse[]>({
-    queryKey: ['announcements', filters],
-    queryFn: () => AnnouncementApi.getAnnouncementsWithFilter(filters),
+  } = useGetAnnouncementsWithFilter({
+    filters,
   });
 
-  const handleFilterSubmit = (formData: FilterFormData) => {
+  const handleFilterSubmit = (formData: FilterFormSchemaType) => {
     setFilters(formData);
   };
 
@@ -55,17 +49,21 @@ export default function AllAnnouncements() {
   }
 
   if (isPending) {
-    return <div>Carregando anúncios...</div>;
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
     <>
       <Header />
-      <div className="flex flex-col gap-6 container mx-auto p-4 mt-8 w-full max-w-7xl px-4">
-        <h2 className="font-bold text-4xl text-center mb-8">
+      <div className="flex flex-col gap-8 mx-auto p-4 mt-24 w-full max-w-7xl px-4">
+        <FilterForm onSubmit={handleFilterSubmit} />
+        <h2 className="font-bold text-4xl text-center mb-4">
           Últimos anúncios
         </h2>
-        <FilterForm onSubmit={handleFilterSubmit} />
         <div>
           {announcements && announcements.length === 0 ? (
             <p className="text-center">Nenhum anúncio encontrado.</p>

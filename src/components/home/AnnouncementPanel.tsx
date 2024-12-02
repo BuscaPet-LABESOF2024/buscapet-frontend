@@ -1,12 +1,12 @@
 import AnnouncementCard from '../../components/announcement/AnnouncementCard';
-import { useGetAnnouncements } from '@/api/announcement/hooks';
+import { useGetLastAnnouncements } from '@/api/announcement/hooks';
 import { Button } from '../ui/button';
 import HomeSection from '../commons/HomeSection';
 import { useNavigate } from 'react-router-dom';
 import { fetchAnnouncementDetails } from '@/api/announcement';
 
 const AnnouncementPanel = () => {
-  const { data: announcements, isError, isPending } = useGetAnnouncements();
+  const { data: announcements, isError, isPending } = useGetLastAnnouncements();
   const navigate = useNavigate();
 
   const handleViewDetails = async (id: number) => {
@@ -67,12 +67,14 @@ const AnnouncementPanel = () => {
             </div>
           )}
         </div>
-        <Button
-          onClick={() => navigate('/all-announcements')}
-          className="w-fit self-end bg-green-400 hover:bg-green-500 mt-4"
-        >
-          Ver mais anúncios
-        </Button>
+        {announcements.length > 0 && (
+          <Button
+            onClick={() => navigate('/all-announcements')}
+            className="w-fit self-end bg-green-400 hover:bg-green-500 mt-4"
+          >
+            Ver mais anúncios
+          </Button>
+        )}
       </div>
     </HomeSection>
   );

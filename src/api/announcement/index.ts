@@ -1,18 +1,25 @@
 import axios from '../api';
-import { FilterFormData } from '../Filters';
+import { GetAnnouncementsWithFilterParams } from './hooks';
+
+
 
 export const AnnouncementApi = {
-  async getAnnouncementsWithFilter(
-    filters: FilterFormData,
-    pageNumber: number = 0
-  ): Promise<AnnouncementResponse[]> {
+  async getAnnouncementsWithFilter({
+    filters,
+    pageNumber = 0,
+    size = 10,
+  }: GetAnnouncementsWithFilterParams): Promise<AnnouncementResponse[]> {
     const { data } = await axios.post('/announcement/search', filters, {
-      params: { pageNumber },
+      params: { pageNumber, size },
     });
     return data.content;
   },
   async getAnnouncements(): Promise<AnnouncementResponse[]> {
     const { data } = await axios.get('/announcement/all-announcement');
+    return data;
+  },
+  async getLastAnnouncements(): Promise<AnnouncementResponse[]> {
+    const { data } = await axios.get('/announcement/last-announcements');
     return data;
   },
   async getMyAnnouncements(): Promise<AnnouncementResponse[]> {
@@ -59,7 +66,7 @@ interface AnnouncementTypeResponse {
   description: string;
 }
 
-export interface ImagesResponse {
+interface ImagesResponse {
   id: number;
   image: string | null;
 }
