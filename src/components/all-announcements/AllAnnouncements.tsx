@@ -5,6 +5,7 @@ import Footer from '../home/Footer';
 import type { FilterFormSchemaType } from './types';
 import { useGetAnnouncementsWithFilter } from '@/api/announcement/hooks';
 import { useState } from 'react';
+import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 
 export default function AllAnnouncements() {
   const [filters, setFilters] = useState<FilterFormSchemaType>({
@@ -29,17 +30,19 @@ export default function AllAnnouncements() {
   }
 
   if (isPending) {
-    return <div>Carregando anúncios...</div>;
+    return <div className='h-screen w-full flex items-center justify-center'>
+      <LoadingSpinner/>
+    </div>;
   }
 
   return (
     <>
       <Header />
-      <div className="flex flex-col gap-6 container mx-auto p-4 mt-8 w-full max-w-7xl px-4">
-        <h2 className="font-bold text-4xl text-center mb-8">
+      <div className="flex flex-col gap-8 mx-auto p-4 mt-24 w-full max-w-7xl px-4">
+        <FilterForm onSubmit={handleFilterSubmit} />
+        <h2 className="font-bold text-4xl text-center mb-4">
           Últimos anúncios
         </h2>
-        <FilterForm onSubmit={handleFilterSubmit} />
         <div>
           {announcements && announcements.length === 0 ? (
             <p className="text-center">Nenhum anúncio encontrado.</p>

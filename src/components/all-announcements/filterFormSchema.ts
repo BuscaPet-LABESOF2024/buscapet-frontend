@@ -1,7 +1,9 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const filterFormSchema = z.object({
-  announcementType: z.number().optional(),
-  neighborhood: z.string().optional(),
-  animalBreed: z.string().optional(),
+  announcementType: z.string({
+    required_error: 'Tipo de anúncio é obrigatório',
+  }),
+  neighborhood: z.string({ required_error: 'Bairro é obrigatório' }),
+  animalBreed: z.string({ required_error: 'Raça é obrigatória' }),
 });
