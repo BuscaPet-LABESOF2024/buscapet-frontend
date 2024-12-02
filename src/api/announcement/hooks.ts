@@ -24,3 +24,9 @@ export function useGetLastAnnouncements() {
     queryFn: () => AnnouncementApi.getLastAnnouncements(),
   });
 }
+export function useGetMyAnnouncements() {
+  return useQuery({
+    queryKey: ['myAnnouncements'],
+    queryFn: () => AnnouncementApi.getMyAnnouncements(),
+  });
+}

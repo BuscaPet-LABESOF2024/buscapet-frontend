@@ -2,7 +2,8 @@ import Home from '../components/home/Home';
 import RegisterPage from '../pages/register';
 import PasswordRecovery from '../components/passwordRecovery/PasswordRecovery';
 import Adoption from '../components/adoption/Adoption';
-import MissingAnimal from '../components/missing-animal/MissingAnimal';
+import MissingAnimal from '../components/lost-animal/LostAnimal';
+import FoundAnimal from '../components/found-animal/FoundAnimal';
 import { useAuth } from '../providers/auth-provider/hook';
 import { ProtectedRoute } from './ProtectedRoute';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -44,8 +45,12 @@ const Routes = () => {
           element: <Adoption />,
         },
         {
-          path: '/missing-animal',
+          path: '/lost-animal',
           element: <MissingAnimal />,
+        },
+        {
+          path: '/found-animal',
+          element: <FoundAnimal />,
         },
         {
           path: '/announcement-registration',

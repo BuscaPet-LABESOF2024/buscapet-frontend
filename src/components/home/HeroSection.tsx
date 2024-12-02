@@ -17,7 +17,7 @@ export default function HeroSection() {
             sua vida.
           </p>
           <div className="mt-8">
-            <Button onClick={() => navigate('/pets')}>
+            <Button onClick={() => navigate('/all-announcements')}>
               Encontre seu pet
             </Button>
           </div>
