@@ -12,6 +12,7 @@ import AnnouncementRegistrationPage from '../pages/announcement-registration';
 import { ProfilePage } from '@/pages/profile-page';
 import MyAnnoucementsPage from '@/pages/my-annoucements';
 import AllAnnouncementsPage from '@/pages/all-announcements';
+import AnnouncementDetailsContainer from '@/components/annoucement-details-conteiner/AnnouncementDetailsContainer';
 
 const Routes = () => {
   const { token } = useAuth();
@@ -67,6 +68,10 @@ const Routes = () => {
         {
           path: '/all-announcements',
           element: <AllAnnouncementsPage />,
+        },
+        {
+          path: '/announcement-details/:id',
+          element: <AnnouncementDetailsContainer />,
         },
       ],
     },
