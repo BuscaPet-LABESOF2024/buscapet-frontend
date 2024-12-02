@@ -9,19 +9,19 @@ import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 
 export default function AllAnnouncements() {
   const [filters, setFilters] = useState<FilterFormSchemaType>({
-    announcementType: undefined,
-    neighborhood: '',
-    animalBreed: '',
+    announcementType: '',
+    animalSize: '',
   });
 
   const {
     data: announcements,
     isError,
     isPending,
-  } = useGetAnnouncementsWithFilter(filters);
+  } = useGetAnnouncementsWithFilter({
+    filters,
+  });
 
   const handleFilterSubmit = (formData: FilterFormSchemaType) => {
-    console.log('formData - > ', formData);
     setFilters(formData);
   };
 
@@ -30,9 +30,11 @@ export default function AllAnnouncements() {
   }
 
   if (isPending) {
-    return <div className='h-screen w-full flex items-center justify-center'>
-      <LoadingSpinner/>
-    </div>;
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (

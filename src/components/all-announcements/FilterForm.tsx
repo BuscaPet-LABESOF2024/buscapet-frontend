@@ -1,8 +1,3 @@
-import {
-  useGetAnnouncementTypes,
-  useGetNeighborhoods,
-  useGetBreeds,
-} from '../../api/Filters/hooks';
 import { Button } from '../ui/button';
 import {
   Select,
@@ -14,7 +9,11 @@ import {
 import { SelectGroup } from '@radix-ui/react-select';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { filterFormSchema } from './filterFormSchema';
+import {
+  animalSizes,
+  announcementTypes,
+  filterFormSchema,
+} from './filterFormSchema';
 import type { FilterFormSchemaType } from './types';
 
 interface FilterFormProps {
@@ -22,12 +21,7 @@ interface FilterFormProps {
 }
 
 export default function FilterForm({ onSubmit }: FilterFormProps) {
-  const { data: announcementTypes, isLoading: isLoadingAnnouncementTypes } = useGetAnnouncementTypes();
-  const { data: neighborhoods, isLoading: isLoadingNeighborhoods } = useGetNeighborhoods();
-  const { data: breeds, isLoading: isLoadingBreeds } = useGetBreeds();
-
   const {
-    register,
     setValue,
     formState: { errors },
     handleSubmit,
@@ -35,21 +29,15 @@ export default function FilterForm({ onSubmit }: FilterFormProps) {
     resolver: zodResolver(filterFormSchema),
     defaultValues: {
       announcementType: '',
-      neighborhood: '',
-      animalBreed: '',
+      animalSize: '',
     },
   });
-
-  if (isLoadingAnnouncementTypes || isLoadingNeighborhoods || isLoadingBreeds) {
-    return <div>Carregando...</div>;
-  }
 
   return (
     <section>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold">Filtrar anúncios</h2>
         <div className="flex items-center gap-4">
-          {/* Select Tipo do Anúncio */}
           <div>
             <Select
               onValueChange={(value) => setValue('announcementType', value)}
@@ -59,9 +47,9 @@ export default function FilterForm({ onSubmit }: FilterFormProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {announcementTypes?.map((type) => (
+                  {announcementTypes.map((type) => (
                     <SelectItem key={type.id} value={type.id.toString()}>
-                      {type.description}
+                      {type.descricao}
                     </SelectItem>
                   ))}
                 </SelectGroup>
@@ -74,57 +62,28 @@ export default function FilterForm({ onSubmit }: FilterFormProps) {
             )}
           </div>
 
-          {/* Select Bairro */}
           <div>
-            <Select
-              onValueChange={(value) => setValue('neighborhood', value)}
-            >
+            <Select onValueChange={(value) => setValue('animalSize', value)}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Bairro" />
+                <SelectValue placeholder="Tamanho do animal" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {neighborhoods?.map((neighborhood, index) => (
-                    <SelectItem key={index} value={neighborhood}>
-                      {neighborhood}
+                  {animalSizes.map((animalSize) => (
+                    <SelectItem key={animalSize.id} value={animalSize.id.toString()}>
+                      {animalSize.descricao}
                     </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {errors.neighborhood && (
+            {errors.animalSize && (
               <span className="text-red-500 text-sm">
-                {errors.neighborhood.message}
+                {errors.animalSize.message}
               </span>
             )}
           </div>
 
-          {/* Select Raça */}
-          <div>
-            <Select
-              onValueChange={(value) => setValue('animalBreed', value)}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Raça" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {breeds?.map((breed, index) => (
-                    <SelectItem key={index} value={breed}>
-                      {breed}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            {errors.animalBreed && (
-              <span className="text-red-500 text-sm">
-                {errors.animalBreed.message}
-              </span>
-            )}
-          </div>
-
-          {/* Botão de Filtrar */}
           <Button type="submit">Filtrar</Button>
         </div>
       </form>

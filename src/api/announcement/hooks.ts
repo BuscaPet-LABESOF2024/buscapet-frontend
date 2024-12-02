@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { AnnouncementApi } from '.';
-import type { FilterFormSchemaType } from '@/components/all-announcements/types';
+import { FilterFormSchemaType } from '@/components/all-announcements/types';
 
 export function useGetAnnouncements() {
   return useQuery({
@@ -9,12 +9,10 @@ export function useGetAnnouncements() {
   });
 }
 
-export function useGetAnnouncementsWithFilter(
-  filters: FilterFormSchemaType
-) {
+export function useGetAnnouncementsWithFilter(params: GetAnnouncementsWithFilterParams) {
   return useQuery({
-    queryKey: ['announcements', filters],
-    queryFn: () => AnnouncementApi.getAnnouncementsWithFilter(filters),
+    queryKey: ['announcements', params],
+    queryFn: () => AnnouncementApi.getAnnouncementsWithFilter(params),
   });
 }
 
@@ -29,4 +27,10 @@ export function useGetMyAnnouncements() {
     queryKey: ['myAnnouncements'],
     queryFn: () => AnnouncementApi.getMyAnnouncements(),
   });
+}
+
+export interface GetAnnouncementsWithFilterParams {
+  filters: FilterFormSchemaType;
+  pageNumber?: number;
+  size?: number;
 }

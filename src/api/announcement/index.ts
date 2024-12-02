@@ -1,13 +1,16 @@
-import type { FilterFormSchemaType } from '@/components/all-announcements/types';
 import axios from '../api';
+import { GetAnnouncementsWithFilterParams } from './hooks';
+
+
 
 export const AnnouncementApi = {
-  async getAnnouncementsWithFilter(
-    filters: FilterFormSchemaType,
-    pageNumber: number = 0
-  ): Promise<AnnouncementResponse[]> {
+  async getAnnouncementsWithFilter({
+    filters,
+    pageNumber = 0,
+    size = 10,
+  }: GetAnnouncementsWithFilterParams): Promise<AnnouncementResponse[]> {
     const { data } = await axios.post('/announcement/search', filters, {
-      params: { pageNumber },
+      params: { pageNumber, size },
     });
     return data.content;
   },
@@ -20,8 +23,8 @@ export const AnnouncementApi = {
     return data;
   },
   async getMyAnnouncements(): Promise<AnnouncementResponse[]> {
-    const { data } = await axios.get('/announcement/my-announcements')
-    return data
+    const { data } = await axios.get('/announcement/my-announcements');
+    return data;
   },
 };
 
