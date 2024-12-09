@@ -9,6 +9,7 @@ import { useDropzone } from 'react-dropzone';
 import { useCreateAdoptionAnnouncement } from '../../api/adoption/hooks'; // Hook que usa mutate para criar anúncio
 import Header from '../home/header/Header';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '../ui/button';
 
 const formatPhoneNumber = (value: string) => {
   const cleaned = value.replace(/\D/g, '');
@@ -27,14 +28,13 @@ export default function Adoption() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null); // Novo estado para armazenar o nome do arquivo
 
-  const { mutateAsync: createAdoptionAnnouncement } = useCreateAdoptionAnnouncement();
+  const { mutateAsync: createAdoptionAnnouncement, isPending, isError, isSuccess } = useCreateAdoptionAnnouncement();
 
   const {
     formState: { errors },
     handleSubmit,
     register,
     setValue,
-    setError
   } = useForm<AdoptionFormSchema>({
     resolver: zodResolver(adoptionSchema),
     defaultValues: {
@@ -100,6 +100,7 @@ export default function Adoption() {
     
       navigate('/');
     } catch (error) {
+      console.error(error);
       toast({
         title: 'Erro ao cadastrar animal para adoção',
         description: 'Tente novamente',
@@ -135,6 +136,8 @@ export default function Adoption() {
     const formattedPhone = formatPhoneNumber(event.target.value);
     setValue('contact_phone', formattedPhone);
   };
+
+  console.log("isPending -> ", isPending);
 
   return (
     <>
@@ -260,20 +263,20 @@ export default function Adoption() {
                     {errors.animal?.size?.message && <ErrorsMessage message={errors.animal.size.message} />}
                   </div>
 
-                  <div className="flex justify-between">
-                    <button
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
                       type="button"
                       onClick={() => setCurrentStep(1)}
-                      className="bg-gray-300 text-gray-700 p-2 rounded w-full"
+                      className="bg-gray-300 hover:bg-gray-400 text-gray-700 p-2 rounded"
                     >
                       Voltar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="submit"
-                      className="bg-purple-500 text-white p-2 rounded w-full"
+                      disabled={isPending}
                     >
                       Criar Anúncio
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
