@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/card';
-import { AnimalSize } from '@/api/announcement';
+import { AnimalSize, AnnouncementType } from '@/api/announcement';
+import { Badge } from '../ui/badge';
 
 interface AnnoucementDetailsAdoptionProps {
   animal: {
@@ -22,6 +23,17 @@ interface AnnoucementDetailsAdoptionProps {
     complemento?: string;
   };
   active: boolean;
+  annoucementType: AnnouncementType;
+}
+
+function getAnnouncementTypeColor(type: AnnouncementType): string {
+  const colorMap = {
+    [AnnouncementType.Adoption]: 'bg-blue-500',
+    [AnnouncementType.Lost]: 'bg-yellow-500',
+    [AnnouncementType.Found]: 'bg-green-500',
+  };
+
+  return colorMap[type] || 'bg-gray-500';
 }
 
 export default function AnnoucementDetailsAdoption({
@@ -33,6 +45,7 @@ export default function AnnoucementDetailsAdoption({
   images,
   address,
   active,
+  annoucementType,
 }: AnnoucementDetailsAdoptionProps) {
   const sizeLabel =
     {
@@ -41,25 +54,45 @@ export default function AnnoucementDetailsAdoption({
       [AnimalSize.Large]: 'Grande',
     }[animal.size] || 'Desconhecido';
 
+  const announcementTypeLabel = {
+    [AnnouncementType.Adoption]: 'Adoção',
+    [AnnouncementType.Lost]: 'Perdido',
+    [AnnouncementType.Found]: 'Encontrado',
+  }[annoucementType];
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
-        {images.length > 0 && images[0]?.image ? ( // Usando optional chaining
+        {images.length > 0 && images[0]?.image ? (
           <img
-            className="rounded-t-lg h-48 w-full object-cover" // Definindo altura fixa
-            src={`data:image/jpeg;base64,${images[0].image}`} // Exibe a primeira imagem
+            className="rounded-t-lg h-96 w-full object-cover md:h-[500px]"
+            src={`data:image/jpeg;base64,${images[0].image}`} // Base64
             alt={`Imagem do anúncio: ${title}`}
           />
         ) : (
           <img
-            className="rounded-t-lg h-48 w-full object-cover rounded-md"
-            src="/img/avatarpet.png" // Substitua pelo caminho da imagem padrão
+            className="rounded-t-lg h-96 w-full object-cover md:h-[500px]"
+            src="/img/avatarpet.png" // Imagem padrão
             alt="Imagem padrão"
           />
         )}
       </div>
+      <h1 className="text-3xl font-bold mb-2">{title}</h1>
+      <div className="flex items-center gap-2 mb-6">
+        <Badge
+          variant={active ? 'outline' : 'destructive'}
+          className={`text-lg ${active ? 'bg-green-500' : 'bg-red-500'}`}
+        >
+          {active ? 'Ativo' : 'Inativo'}
+        </Badge>
 
-      <h6 className="text-3xl font-bold mb-6">{title}</h6>
+        <Badge
+          variant="outline"
+          className={`${getAnnouncementTypeColor(annoucementType)} text-lg`}
+        >
+          {announcementTypeLabel}
+        </Badge>
+      </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         <Card className="p-6">
@@ -88,10 +121,6 @@ export default function AnnoucementDetailsAdoption({
             <div className="flex justify-between">
               <span className="text-muted-foreground">Peso</span>
               <span>{animal.weight} kg</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Ativo</span>
-              <span>{active ? 'Sim' : 'Não'}</span>
             </div>
           </div>
         </Card>

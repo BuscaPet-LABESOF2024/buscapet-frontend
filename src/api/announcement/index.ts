@@ -1,8 +1,6 @@
 import axios from '../api';
 import { GetAnnouncementsWithFilterParams } from './hooks';
 
-
-
 export const AnnouncementApi = {
   async getAnnouncementsWithFilter({
     filters,
@@ -66,7 +64,7 @@ interface AnnouncementTypeResponse {
   description: string;
 }
 
-interface ImagesResponse {
+export interface ImagesResponse {
   id: number;
   image: string | null;
 }
