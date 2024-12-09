@@ -1,26 +1,83 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../home/header/Header';
+import { Heart, Search, PawPrint } from 'lucide-react';
+
+interface SectionProps {
+  title: string;
+  icon: React.ReactNode;
+  backgroundImage: string;
+  recommendations: string[];
+  onClick: () => void;
+}
+
+const Section: React.FC<SectionProps> = ({
+  title,
+  icon,
+  backgroundImage,
+  recommendations,
+  onClick,
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div
+      className="relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl cursor-pointer h-[400px]"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300 hover:bg-opacity-30" />
+      <div className="relative h-full flex flex-col justify-between p-6 z-10">
+        <div className="text-white">
+          {icon}
+          <h2 className="text-3xl font-bold mt-4">{title}</h2>
+        </div>
+        <div
+          className={`bg-white rounded-lg p-4 transition-all duration-300 ${
+            isHovered
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-full'
+          }`}
+        >
+          <h3 className="font-semibold text-gray-800 mb-2">Recomendações:</h3>
+          <ul className="text-sm text-gray-600 space-y-1">
+            {recommendations.map((rec, idx) => (
+              <li key={idx} className="flex items-center">
+                <span className="mr-2 text-green-500">•</span>
+                {rec}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function AnnouncementRegistration() {
-  const [hoverSection, setHoverSection] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const recommendations = {
     adoção: [
-      'Fotos nítidas do animal',
-      'Informe a idade aproximada',
-      'Vacinações atualizadas',
+      'Fotos nítidas do animal.',
+      'Informe a idade aproximada.',
+      'Vacinações atualizadas.',
     ],
     desaparecido: [
-      'Última localização',
-      'Nome pelo qual é chamado',
-      'Foto nítida do animal',
+      'Última localização.',
+      'Nome pelo qual é chamado.',
+      'Foto nítida do animal.',
     ],
     encontrado: [
-      'Informe a localização onde foi encontrado',
-      'Descreva suas características',
-      'Foto do animal encontrado',
+      'Informe a localização onde foi encontrado.',
+      'Descreva suas características.',
+      'Foto do animal encontrado.',
     ],
   };
 
@@ -35,74 +92,36 @@ export default function AnnouncementRegistration() {
   };
 
   return (
-    <>
+    <div className="bg-gray-100">
       <Header />
-      <div className="grid grid-cols-1 md:grid-cols-3 w-full min-h-screen">
-        <div
-          className="relative group bg-cover bg-center bg-[url('/img/animal-adocao.jpg')] flex items-center justify-center text-white text-xl font-bold cursor-pointer transition-all duration-300"
-          onMouseEnter={() => setHoverSection('adoção')}
-          onMouseLeave={() => setHoverSection(null)}
-          onClick={() => handleClick('adoção')}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-70 hover:bg-opacity-0 hover:text-transparent flex items-center justify-center transition-all duration-300">
-            <span className='text-2xl'>Cadastrar Animal para Adoção</span>
-          </div>
-          {hoverSection === 'adoção' && (
-            <div className="absolute bottom-0 left-0 right-0 bg-white p-4 text-sm text-gray-700 shadow-lg transition-all duration-300 opacity-100">
-              <h3 className="font-semibold">Recomendações para Adoção:</h3>
-              <ul>
-                {recommendations.adoção.map((rec, idx) => (
-                  <li key={idx}>- {rec}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+      <main className="container mx-auto px-4 py-12">
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-12">
+          Cadastro de Anúncios
+        </h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <Section
+            title="Cadastrar Animal para Adoção"
+            icon={<Heart className="w-12 h-12" />}
+            backgroundImage="/img/animal-adocao.jpg"
+            recommendations={recommendations.adoção}
+            onClick={() => handleClick('adoção')}
+          />
+          <Section
+            title="Cadastrar Animal Desaparecido"
+            icon={<Search className="w-12 h-12" />}
+            backgroundImage="/img/animal-perdido.avif"
+            recommendations={recommendations.desaparecido}
+            onClick={() => handleClick('desaparecido')}
+          />
+          <Section
+            title="Cadastrar Animal Encontrado"
+            icon={<PawPrint className="w-12 h-12" />}
+            backgroundImage="/img/animal-encontrado.jpg"
+            recommendations={recommendations.encontrado}
+            onClick={() => handleClick('encontrado')}
+          />
         </div>
-        <div
-          className="relative group bg-cover bg-center bg-[url('/img/animal-perdido.avif')] flex items-center justify-center text-white text-xl font-bold cursor-pointer transition-all duration-300"
-          onMouseEnter={() => setHoverSection('desaparecido')}
-          onMouseLeave={() => setHoverSection(null)}
-          onClick={() => handleClick('desaparecido')}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-70 hover:bg-opacity-0 hover:text-transparent flex items-center justify-center transition-all duration-300">
-            <span className='text-2xl'>Cadastrar Animal Desaparecido</span>
-          </div>
-          {hoverSection === 'desaparecido' && (
-            <div className="absolute bottom-0 left-0 right-0 bg-white p-4 text-sm text-gray-700 shadow-lg transition-all duration-300 opacity-100">
-              <h3 className="font-semibold">
-                Recomendações para Animal Desaparecido:
-              </h3>
-              <ul>
-                {recommendations.desaparecido.map((rec, idx) => (
-                  <li key={idx}>- {rec}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        <div
-          className="relative group bg-cover bg-center bg-[url('/img/animal-encontrado.jpg')] flex items-center justify-center text-white text-xl font-bold cursor-pointer transition-all duration-300"
-          onMouseEnter={() => setHoverSection('encontrado')}
-          onMouseLeave={() => setHoverSection(null)}
-          onClick={() => handleClick('encontrado')}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-70 hover:bg-opacity-0 hover:text-transparent flex items-center justify-center transition-all duration-300">
-            <span className='text-2xl'>Cadastrar Animal Encontrado</span>
-          </div>
-          {hoverSection === 'encontrado' && (
-            <div className="absolute bottom-0 left-0 right-0 bg-white p-4 text-sm text-gray-700 shadow-lg transition-all duration-300 opacity-100">
-              <h3 className="font-semibold">
-                Recomendações para Animal Encontrado:
-              </h3>
-              <ul>
-                {recommendations.encontrado.map((rec, idx) => (
-                  <li key={idx}>- {rec}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }

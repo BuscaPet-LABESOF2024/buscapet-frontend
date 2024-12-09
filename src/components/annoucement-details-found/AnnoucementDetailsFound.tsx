@@ -1,5 +1,10 @@
-import { AnimalSize, ImagesResponse } from '@/api/announcement';
+import {
+  AnimalSize,
+  AnnouncementType,
+  ImagesResponse,
+} from '@/api/announcement';
 import { Card } from '../ui/card';
+import { Badge } from '../ui/badge';
 
 interface AnnoucementDetailsFoundProps {
   animal: {
@@ -20,6 +25,17 @@ interface AnnoucementDetailsFoundProps {
     complemento?: string;
   };
   active: boolean;
+  annoucementType: AnnouncementType;
+}
+
+function getAnnouncementTypeColor(type: AnnouncementType): string {
+  const colorMap = {
+    [AnnouncementType.Adoption]: 'bg-blue-500',
+    [AnnouncementType.Lost]: 'bg-yellow-500',
+    [AnnouncementType.Found]: 'bg-green-500',
+  };
+
+  return colorMap[type] || 'bg-gray-500';
 }
 
 const AnnoucementDetailsFound: React.FC<AnnoucementDetailsFoundProps> = ({
@@ -31,6 +47,7 @@ const AnnoucementDetailsFound: React.FC<AnnoucementDetailsFoundProps> = ({
   images,
   address,
   active,
+  annoucementType,
 }: AnnoucementDetailsFoundProps) => {
   const sizeLabel =
     {
@@ -39,25 +56,45 @@ const AnnoucementDetailsFound: React.FC<AnnoucementDetailsFoundProps> = ({
       [AnimalSize.Large]: 'Grande',
     }[animal.size] || 'Desconhecido';
 
+  const announcementTypeLabel = {
+    [AnnouncementType.Adoption]: 'Adoção',
+    [AnnouncementType.Lost]: 'Perdido',
+    [AnnouncementType.Found]: 'Encontrado',
+  }[annoucementType];
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
         {images.length > 0 && images[0]?.image ? ( // Usando optional chaining
           <img
-            className="rounded-t-lg h-48 w-full object-cover" // Definindo altura fixa
+            className="rounded-t-lg h-96 w-full object-cover md:h-[500px]"
             src={`data:image/jpeg;base64,${images[0].image}`} // Exibe a primeira imagem
             alt={`Imagem do anúncio: ${title}`}
           />
         ) : (
           <img
-            className="rounded-t-lg h-48 w-full object-cover rounded-md"
+            className="rounded-t-lg h-96 w-full object-cover md:h-[500px]"
             src="/img/avatarpet.png" // Substitua pelo caminho da imagem padrão
             alt="Imagem padrão"
           />
         )}
       </div>
 
-      <h3 className="text-3xl font-bold mb-6">{title}</h3>
+      <h1 className="text-3xl font-bold mb-2">{title}</h1>
+      <div className="flex items-center gap-2 mb-6">
+        <Badge
+          variant={active ? 'outline' : 'destructive'}
+          className={`text-lg ${active ? 'bg-green-500' : 'bg-red-500'}`}
+        >
+          {active ? 'Ativo' : 'Inativo'}
+        </Badge>
+        <Badge
+          variant="outline"
+          className={`${getAnnouncementTypeColor(annoucementType)} text-lg`}
+        >
+          {announcementTypeLabel}
+        </Badge>
+      </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         <Card className="p-6">

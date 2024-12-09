@@ -57,6 +57,7 @@ export default function AnnouncementDetailsPage({
             images={images}
             address={address}
             active={active}
+            annoucementType={announcementType}
           />
         );
       case 2:
@@ -70,6 +71,7 @@ export default function AnnouncementDetailsPage({
             images={images}
             address={address}
             active={active}
+            annoucementType={announcementType}
           />
         );
       case 3:
@@ -83,6 +85,7 @@ export default function AnnouncementDetailsPage({
             images={images}
             address={address}
             active={active}
+            annoucementType={announcementType}
           />
         );
       default:
