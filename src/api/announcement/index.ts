@@ -10,6 +10,7 @@ export const AnnouncementApi = {
     const { data } = await axios.post('/announcement/search', filters, {
       params: { pageNumber, size },
     });
+    console.log("data -> ", data);
     return data.content;
   },
   async getAnnouncements(): Promise<AnnouncementResponse[]> {

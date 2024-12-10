@@ -8,12 +8,23 @@ import { useState } from 'react';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { fetchAnnouncementDetails } from '@/api/announcement';
 import { useNavigate } from 'react-router-dom';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '../ui/pagination';
 
 export default function AllAnnouncements() {
   const [filters, setFilters] = useState<FilterFormSchemaType>({
     announcementType: '',
     animalSize: '',
   });
+
+  const [page, setPage] = useState(0);
 
   const navigate = useNavigate();
 
@@ -23,6 +34,7 @@ export default function AllAnnouncements() {
     isPending,
   } = useGetAnnouncementsWithFilter({
     filters,
+    pageNumber: page,
   });
 
   const handleFilterSubmit = (formData: FilterFormSchemaType) => {
@@ -93,6 +105,35 @@ export default function AllAnnouncements() {
           )}
         </div>
       </div>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={() => setPage((old) => Math.max(old - 1, 0))}
+              className={page === 0 ? 'pointer-events-none opacity-50' : ''}
+            />
+          </PaginationItem>
+          {[...Array(5)].map((_, i) => (
+            <PaginationItem key={i}>
+              <PaginationLink 
+                href="#" 
+                onClick={() => setPage(i + 1)}
+                isActive={page === i + 1}
+              >
+                {i + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext href="#" onClick={() => setPage(old => old + 1)} />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+
       <Footer />
     </>
   );
