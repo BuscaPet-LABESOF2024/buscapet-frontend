@@ -10,15 +10,7 @@ import Header from '../home/header/Header';
 import { useNavigate } from 'react-router-dom';
 import { useCreateLostAnnouncement } from '../../api/lost-animal/hooks'; 
 import { useSearchCep } from '../../api/search-address/hooks'; // Importe o hook
-
-const formatPhoneNumber = (value: string) => {
-  const cleaned = value.replace(/\D/g, '');
-  const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
-  if (match) {
-    return `(${match[1]}) ${match[2]}-${match[3]}`;
-  }
-  return value;
-};
+import { Button } from '../ui/button';
 
 export default function LostAnimal() {
   const navigate = useNavigate();
@@ -28,7 +20,7 @@ export default function LostAnimal() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null); // Novo estado para armazenar o nome do arquivo
   const { searchCep } = useSearchCep();
-  const { mutateAsync: createLostAnnouncement } = useCreateLostAnnouncement();
+  const { mutateAsync: createLostAnnouncement, isPending } = useCreateLostAnnouncement();
 
   const {
     formState: { errors },
@@ -36,7 +28,8 @@ export default function LostAnimal() {
     register,
     setValue,
     setError,
-    clearErrors
+    clearErrors,
+    watch
   } = useForm<LostAnimalFormSchema>({
     resolver: zodResolver(LostSchema),
     defaultValues: {
@@ -183,8 +176,20 @@ export default function LostAnimal() {
   });
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedPhone = formatPhoneNumber(event.target.value);
-    setValue('contact_phone', formattedPhone);
+    const input = event.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    let formattedPhone = '';
+  
+    if (input.length >= 1) {
+      formattedPhone = '(' + input.substring(0, 2); // Adiciona o DDD com parênteses
+    }
+    if (input.length >= 3) {
+      formattedPhone += ') ' + input.substring(2, 7); // Adiciona a parte inicial do número
+    }
+    if (input.length >= 8) {
+      formattedPhone += '-' + input.substring(7, 11); // Adiciona o traço e a parte final
+    }
+  
+    setValue('contact_phone', formattedPhone); // Atualiza o valor no formulário
   };
 
   return (
@@ -206,7 +211,7 @@ export default function LostAnimal() {
                     <input
                       id="title"
                       {...register('title')}
-                      placeholder="Ex: Cachorro para adoção"
+                      placeholder="Ex: Cachorro desaparecido na região central"
                       className="border p-2 rounded w-full"
                     />
                     {errors.title?.message && <ErrorsMessage message={errors.title.message} />}
@@ -219,7 +224,7 @@ export default function LostAnimal() {
                     <textarea
                       id="description"
                       {...register('description')}
-                      placeholder="Descrição geral da origem do animal, bairro encontrado, personalidade, etc..."
+                      placeholder="Descrição geral da origem do animal, bairro onde desapareceu, personalidade, etc..."
                       className="border p-2 rounded w-full"
                     />
                     {errors.description?.message && <ErrorsMessage message={errors.description.message} />}
@@ -232,9 +237,11 @@ export default function LostAnimal() {
                     <input
                       id="contact_phone"
                       {...register('contact_phone')}
-                      placeholder="(xx) xxxx-xxxxx"
+                      placeholder="(00) 00000-0000"
                       className="border p-2 rounded w-full"
-                      onChange={handlePhoneChange} // Aplica a formatação quando o valor mudar
+                      value={watch('contact_phone') || ''} // Atualiza o valor conforme o estado
+                      onChange={handlePhoneChange} // Formata a entrada ao digitar
+                      maxLength={15} // Limita o número de caracteres no formato completo
                     />
                     {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
                   </div>
@@ -378,20 +385,20 @@ export default function LostAnimal() {
                     {errors.address?.number?.message && <ErrorsMessage message={errors.address.number.message} />}
                   </div>
 
-                  <div className="flex justify-between">
-                    <button
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
                       type="button"
                       onClick={() => setCurrentStep(1)}
-                      className="bg-gray-300 text-gray-700 p-2 rounded w-full"
+                      className="bg-gray-300 hover:bg-gray-400 text-gray-700 p-2 rounded"
                     >
                       Voltar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="submit"
-                      className="bg-purple-500 text-white p-2 rounded w-full"
+                      disabled={isPending}
                     >
                       Criar Anúncio
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
