@@ -30,6 +30,7 @@ const Section: React.FC<SectionProps> = ({
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
       }}
     >
       <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300 hover:bg-opacity-30" />
@@ -109,7 +110,7 @@ export default function AnnouncementRegistration() {
           <Section
             title="Cadastrar Animal Desaparecido"
             icon={<Search className="w-12 h-12" />}
-            backgroundImage="/img/animal-perdido.avif"
+            backgroundImage="/img/animal-perdido.jpg"
             recommendations={recommendations.desaparecido}
             onClick={() => handleClick('desaparecido')}
           />

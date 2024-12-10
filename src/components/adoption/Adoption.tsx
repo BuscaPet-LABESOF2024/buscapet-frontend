@@ -11,15 +11,6 @@ import Header from '../home/header/Header';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 
-const formatPhoneNumber = (value: string) => {
-  const cleaned = value.replace(/\D/g, '');
-  const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
-  if (match) {
-    return `(${match[1]}) ${match[2]}-${match[3]}`;
-  }
-  return value;
-};
-
 export default function Adoption() {
   const navigate = useNavigate();
   const [imgSize, setImgSize] = useState<number>(0);
@@ -35,6 +26,7 @@ export default function Adoption() {
     handleSubmit,
     register,
     setValue,
+    watch
   } = useForm<AdoptionFormSchema>({
     resolver: zodResolver(adoptionSchema),
     defaultValues: {
@@ -133,11 +125,21 @@ export default function Adoption() {
   });
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedPhone = formatPhoneNumber(event.target.value);
-    setValue('contact_phone', formattedPhone);
+    const input = event.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    let formattedPhone = '';
+  
+    if (input.length >= 1) {
+      formattedPhone = '(' + input.substring(0, 2); // Adiciona o DDD com parênteses
+    }
+    if (input.length >= 3) {
+      formattedPhone += ') ' + input.substring(2, 7); // Adiciona a parte inicial do número
+    }
+    if (input.length >= 8) {
+      formattedPhone += '-' + input.substring(7, 11); // Adiciona o traço e a parte final
+    }
+  
+    setValue('contact_phone', formattedPhone); // Atualiza o valor no formulário
   };
-
-  console.log("isPending -> ", isPending);
 
   return (
     <>
@@ -184,9 +186,11 @@ export default function Adoption() {
                     <input
                       id="contact_phone"
                       {...register('contact_phone')}
-                      placeholder="(xx) xxxx-xxxxx"
+                      placeholder="(00) 00000-0000"
                       className="border p-2 rounded w-full"
-                      onChange={handlePhoneChange} // Aplica a formatação quando o valor mudar
+                      value={watch('contact_phone') || ''} // Atualiza o valor conforme o estado
+                      onChange={handlePhoneChange} // Formata a entrada ao digitar
+                      maxLength={15} // Limita o número de caracteres no formato completo
                     />
                     {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
                   </div>
