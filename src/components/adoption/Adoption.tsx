@@ -10,6 +10,11 @@ import { useCreateAdoptionAnnouncement } from '../../api/adoption/hooks'; // Hoo
 import Header from '../home/header/Header';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import Footer from '../home/Footer';
 
 export default function Adoption() {
   const navigate = useNavigate();
@@ -144,140 +149,134 @@ export default function Adoption() {
   return (
     <>
       <Header />
-      <section id="adoption">
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="w-full max-w-xl bg-gray-100 p-8 rounded-lg shadow-lg mt-7">
-            <h1 className="text-2xl font-bold mb-6 text-center">
-              Cadastro de Animal para Adoção
-            </h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <section id="adoption" className="bg-gray-50 py-12 min-h-screen flex items-center justify-center mt-16">
+        <Card className="w-full max-w-2xl">
+          <CardHeader>
+            <CardTitle className="text-4xl font-extrabold text-center">
+              <span className="bg-gradient-to-r from-primary to-purple-600 text-transparent bg-clip-text">
+                Cadastro de Animal para Adoção
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {currentStep === 1 && (
                 <>
-                  <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                      Título do Anúncio
-                    </label>
-                    <input
-                      id="title"
-                      {...register('title')}
-                      placeholder="Ex: Cachorro para adoção"
-                      className="border p-2 rounded w-full"
-                    />
-                    {errors.title?.message && <ErrorsMessage message={errors.title.message} />}
-                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="title">Título do Anúncio</Label>
+                      <Input
+                        id="title"
+                        {...register('title')}
+                        placeholder="Ex: Cachorro para adoção"
+                      />
+                      {errors.title?.message && <ErrorsMessage message={errors.title.message} />}
+                    </div>
 
-                  <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                      Descrição
-                    </label>
-                    <textarea
-                      id="description"
-                      {...register('description')}
-                      placeholder="Descrição geral da origem do animal, bairro encontrado, personalidade, etc..."
-                      className="border p-2 rounded w-full"
-                    />
-                    {errors.description?.message && <ErrorsMessage message={errors.description.message} />}
-                  </div>
+                    <div>
+                      <Label htmlFor="description">Descrição</Label>
+                      <Textarea
+                        id="description"
+                        {...register('description')}
+                        placeholder="Descrição geral da origem do animal, bairro encontrado, personalidade, etc..."
+                        className="h-32"
+                      />
+                      {errors.description?.message && <ErrorsMessage message={errors.description.message} />}
+                    </div>
 
-                  <div>
-                    <label htmlFor="contact_phone" className="block text-sm font-medium text-gray-700">
-                      Telefone de Contato
-                    </label>
-                    <input
-                      id="contact_phone"
-                      {...register('contact_phone')}
-                      placeholder="(00) 00000-0000"
-                      className="border p-2 rounded w-full"
-                      value={watch('contact_phone') || ''} // Atualiza o valor conforme o estado
-                      onChange={handlePhoneChange} // Formata a entrada ao digitar
-                      maxLength={15} // Limita o número de caracteres no formato completo
-                    />
-                    {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
-                  </div>
+                    <div>
+                      <Label htmlFor="contact_phone">Telefone de Contato</Label>
+                      <Input
+                        id="contact_phone"
+                        {...register('contact_phone')}
+                        placeholder="(00) 00000-0000"
+                        value={watch('contact_phone') || ''}
+                        onChange={handlePhoneChange}
+                        maxLength={15}
+                      />
+                      {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
+                    </div>
 
-                  <div {...getRootProps()} className="border-dashed border-2 p-4 text-center">
-                    <input {...getInputProps()} />
-                    <p>Arraste ou clique para fazer upload de fotos do animal</p>
-                  </div>
-                  {selectedFileName && <p className="mt-2 text-gray-400 text-center"> {selectedFileName}</p>} {/* Exibe o nome do arquivo */}
-                  {errors.imageAnnouncement?.message && <ErrorsMessage message={errors.imageAnnouncement?.message} />}
-
-                  <div className="flex justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(2)}
-                      className="bg-purple-500 text-white p-2 rounded w-full"
+                    <div 
+                      {...getRootProps()} 
+                      className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer"
                     >
-                      Próxima Etapa
-                    </button>
+                      <input {...getInputProps()} />
+                      <p>Arraste ou clique para fazer upload de fotos do animal</p>
+                    </div>
+                    {selectedFileName && <p className="mt-2 text-sm text-gray-500 text-center">{selectedFileName}</p>}
+                    {errors.imageAnnouncement?.message && <ErrorsMessage message={errors.imageAnnouncement?.message} />}
                   </div>
+
+                  <Button 
+                    type="button" 
+                    onClick={() => setCurrentStep(2)} 
+                    className="w-full"
+                  >
+                    Próxima Etapa
+                  </Button>
                 </>
               )}
 
               {currentStep === 2 && (
                 <>
-                  <div>
-                    <label htmlFor="animal.name" className="block text-sm font-medium text-gray-700">
-                      Nome do Animal
-                    </label>
-                    <input
-                      id="animal.name"
-                      {...register('animal.name')}
-                      placeholder="Nome do animal"
-                      className="border p-2 rounded w-full"
-                    />
-                    {errors.animal?.name?.message && <ErrorsMessage message={errors.animal.name.message} />}
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="animal.name">Nome do Animal</Label>
+                      <Input
+                        id="animal.name"
+                        {...register('animal.name')}
+                        placeholder="Nome do animal"
+                      />
+                      {errors.animal?.name?.message && <ErrorsMessage message={errors.animal.name.message} />}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="animal.type">Tipo de Animal</Label>
+                      <Input
+                        id="animal.type"
+                        {...register('animal.type')}
+                        placeholder="Ex: Cachorro, Gato..."
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="animal.breed">Raça</Label>
+                      <Input
+                        id="animal.breed"
+                        {...register('animal.breed')}
+                        placeholder="Ex. Sem raça definida..."
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="animal.size" className="block text-sm font-medium text-gray-700">
+                        Tamanho do Animal
+                      </label>
+                      <select {...register('animal.size')} className="border p-2 rounded w-full">
+                        {sizesOptions.map((size, i) => (
+                          <option key={i} value={i}>
+                            {size}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.animal?.size?.message && <ErrorsMessage message={errors.animal.size.message} />}
+                    </div>
                   </div>
 
-                  <div>
-                    <label htmlFor="animal.type" className="block text-sm font-medium text-gray-700">
-                      Tipo de Animal
-                    </label>
-                    <input
-                      id="animal.type"
-                      {...register('animal.type')}
-                      placeholder="Ex: Cachorro, Gato..."
-                      className="border p-2 rounded w-full"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="animal.breed" className="block text-sm font-medium text-gray-700">
-                      Raça
-                    </label>
-                    <input
-                      id="animal.breed"
-                      {...register('animal.breed')}
-                      placeholder="Ex. Sem raça definida..."
-                      className="border p-2 rounded w-full"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="animal.size" className="block text-sm font-medium text-gray-700">
-                      Tamanho do Animal
-                    </label>
-                    <select {...register('animal.size')} className="border p-2 rounded w-full">
-                      {sizesOptions.map((size, i) => (
-                        <option key={i} value={i}>
-                          {size}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.animal?.size?.message && <ErrorsMessage message={errors.animal.size.message} />}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="flex space-x-4">
                     <Button
                       type="button"
                       onClick={() => setCurrentStep(1)}
-                      className="bg-gray-300 hover:bg-gray-400 text-gray-700 p-2 rounded"
+                      variant="outline"
+                      className="w-full"
                     >
                       Voltar
                     </Button>
                     <Button
                       type="submit"
                       disabled={isPending}
+                      className="w-full"
                     >
                       Criar Anúncio
                     </Button>
@@ -287,18 +286,19 @@ export default function Adoption() {
             </form>
 
             {showSuccessMessage && (
-              <div className="bg-green-100 text-green-800 p-3 rounded mt-4">
+              <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-md">
                 {showSuccessMessage}
               </div>
             )}
             {showErrorMessage && (
-              <div className="bg-red-100 text-red-800 p-3 rounded mt-4">
+              <div className="mt-4 p-4 bg-red-100 text-red-800 rounded-md">
                 {showErrorMessage}
               </div>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </section>
+      <Footer />
     </>
   );
 }
