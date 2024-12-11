@@ -1,4 +1,4 @@
-import { useForm, SubmitHandler, UseFormClearErrors } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -11,12 +11,17 @@ import { useNavigate } from 'react-router-dom';
 import { useCreateFoundAnnouncement } from '../../api/found-animal/hooks'; 
 import { useSearchCep } from '../../api/search-address/hooks'; // Importe o hook
 import { Button } from '../ui/button';
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import Footer from '../home/Footer';
 
 export default function FoundAnimal() {
   const navigate = useNavigate();
   const [imgSize, setImgSize] = useState<number>(0);
-  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
-  const [showErrorMessage, setShowErrorMessage] = useState<string | null>(null);
+  const [showSuccessMessage] = useState<string | null>(null);
+  const [showErrorMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null); // Novo estado para armazenar o nome do arquivo
   const { searchCep } = useSearchCep();
@@ -195,112 +200,103 @@ export default function FoundAnimal() {
   return (
     <>
       <Header />
-      <section id="adoption">
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="w-full max-w-xl bg-gray-100 p-8 rounded-lg shadow-lg mt-7">
-            <h1 className="text-2xl font-bold mb-6 text-center">
+      <section id="adoption" className="bg-gray-50 py-12 min-h-screen flex items-center justify-center mt-16">
+      <Card className="w-full max-w-2xl">
+        <CardHeader>
+        <CardTitle className="text-4xl font-extrabold text-center">
+            <span className="bg-gradient-to-r from-primary to-purple-600 text-transparent bg-clip-text">
               Cadastro de Animal Encontrado
-            </h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {currentStep === 1 && (
-                <>
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {currentStep === 1 && (
+              <>
+                <div className="space-y-4">
                   <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                      Título do Anúncio
-                    </label>
-                    <input
+                    <Label htmlFor="title">Título do Anúncio</Label>
+                    <Input
                       id="title"
                       {...register('title')}
                       placeholder="Ex: Cachorro encontrado na região central"
-                      className="border p-2 rounded w-full"
                     />
                     {errors.title?.message && <ErrorsMessage message={errors.title.message} />}
                   </div>
 
                   <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                      Descrição
-                    </label>
-                    <textarea
+                    <Label htmlFor="description">Descrição</Label>
+                    <Textarea
                       id="description"
                       {...register('description')}
                       placeholder="Descrição geral da origem do animal, bairro encontrado, personalidade, etc..."
-                      className="border p-2 rounded w-full"
+                      className="h-32"
                     />
                     {errors.description?.message && <ErrorsMessage message={errors.description.message} />}
                   </div>
 
                   <div>
-                    <label htmlFor="contact_phone" className="block text-sm font-medium text-gray-700">
-                      Telefone de Contato
-                    </label>
-                    <input
+                    <Label htmlFor="contact_phone">Telefone de Contato</Label>
+                    <Input
                       id="contact_phone"
                       {...register('contact_phone')}
                       placeholder="(00) 00000-0000"
-                      className="border p-2 rounded w-full"
-                      value={watch('contact_phone') || ''} // Atualiza o valor conforme o estado
-                      onChange={handlePhoneChange} // Formata a entrada ao digitar
-                      maxLength={15} // Limita o número de caracteres no formato completo
+                      value={watch('contact_phone') || ''}
+                      onChange={handlePhoneChange}
+                      maxLength={15}
                     />
                     {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
                   </div>
 
-                  <div {...getRootProps()} className="border-dashed border-2 p-4 text-center">
+                  <div 
+                    {...getRootProps()} 
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer"
+                  >
                     <input {...getInputProps()} />
                     <p>Arraste ou clique para fazer upload de fotos do animal</p>
                   </div>
-                  {selectedFileName && <p className="mt-2 text-gray-400 text-center"> {selectedFileName}</p>} {/* Exibe o nome do arquivo */}
+                  {selectedFileName && <p className="mt-2 text-sm text-gray-500 text-center">{selectedFileName}</p>}
                   {errors.imageAnnouncement?.message && <ErrorsMessage message={errors.imageAnnouncement?.message} />}
+                </div>
 
-                  <div className="flex justify-between">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(2)}
-                      className="bg-purple-500 text-white p-2 rounded w-full"
-                    >
-                      Próxima Etapa
-                    </button>
-                  </div>
-                </>
-              )}
+                <Button 
+                  type="button" 
+                  onClick={() => setCurrentStep(2)} 
+                  className="w-full"
+                >
+                  Próxima Etapa
+                </Button>
+              </>
+            )}
 
-              {currentStep === 2 && (
-                <>
+            {currentStep === 2 && (
+              <>
+                <div className="space-y-4">
                   <div>
-                    <label htmlFor="animal.name" className="block text-sm font-medium text-gray-700">
-                      Nome do Animal
-                    </label>
-                    <input
+                    <Label htmlFor="animal.name">Nome do Animal</Label>
+                    <Input
                       id="animal.name"
                       {...register('animal.name')}
                       placeholder="Nome do animal"
-                      className="border p-2 rounded w-full"
                     />
                     {errors.animal?.name?.message && <ErrorsMessage message={errors.animal.name.message} />}
                   </div>
 
                   <div>
-                    <label htmlFor="animal.type" className="block text-sm font-medium text-gray-700">
-                      Tipo de Animal
-                    </label>
-                    <input
+                    <Label htmlFor="animal.type">Tipo de Animal</Label>
+                    <Input
                       id="animal.type"
                       {...register('animal.type')}
                       placeholder="Ex: Cachorro, Gato..."
-                      className="border p-2 rounded w-full"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="animal.breed" className="block text-sm font-medium text-gray-700">
-                      Raça
-                    </label>
-                    <input
+                    <Label htmlFor="animal.breed">Raça</Label>
+                    <Input
                       id="animal.breed"
                       {...register('animal.breed')}
                       placeholder="Ex. Sem raça definida..."
-                      className="border p-2 rounded w-full"
                     />
                   </div>
 
@@ -319,105 +315,93 @@ export default function FoundAnimal() {
                   </div>
 
                   <div>
-                    <label htmlFor="data" className="block text-sm font-medium text-gray-700">
-                      Data que o animal foi encontrado
-                    </label>
-                    <input type="datetime-local"
+                    <Label htmlFor="data">Data que o animal foi encontrado</Label>
+                    <Input
+                      type="datetime-local"
                       id="data"
                       {...register('data')}
-                      placeholder="Ex: 01/01/2024"
-                      className="border p-2 rounded w-full"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="address.cep" className="block text-sm font-medium text-gray-700">
-                      CEP aproximado do local de encontro
-                    </label>
-                    <input
+                    <Label htmlFor="address.cep">CEP aproximado do local de encontro</Label>
+                    <Input
                       id="address.cep"
                       {...register('address.cep')}
                       placeholder="Ex: 12345678"
-                      className="border p-2 rounded w-full"
-                      onBlur={handleCepChange} // Consulta o CEP quando o campo perde o foco
+                      onBlur={handleCepChange}
                     />
                     {errors.address?.cep?.message && <ErrorsMessage message={errors.address.cep.message} />}
                   </div>
 
                   <div>
-                    <label htmlFor="address.neighborhod" className="block text-sm font-medium text-gray-700">
-                      Bairro
-                    </label>
-                    <input
+                    <Label htmlFor="address.neighborhod">Bairro</Label>
+                    <Input
                       id="address.neighborhod"
                       {...register('address.neighborhod')}
                       placeholder="Ex: Centro"
-                      className="border p-2 rounded w-full"
                       disabled
                     />
                     {errors.address?.neighborhod?.message && <ErrorsMessage message={errors.address.neighborhod.message} />}
                   </div>
 
                   <div>
-                    <label htmlFor="address.street" className="block text-sm font-medium text-gray-700">
-                      Rua
-                    </label>
-                    <input
+                    <Label htmlFor="address.street">Rua</Label>
+                    <Input
                       id="address.street"
                       {...register('address.street')}
                       placeholder="Ex: Rua das Flores"
-                      className="border p-2 rounded w-full"
                       disabled
                     />
                     {errors.address?.street?.message && <ErrorsMessage message={errors.address.street.message} />}
                   </div>
 
                   <div>
-                    <label htmlFor="address.number" className="block text-sm font-medium text-gray-700">
-                      Número
-                    </label>
-                    <input
+                    <Label htmlFor="address.number">Número</Label>
+                    <Input
                       id="address.number"
                       {...register('address.number')}
                       placeholder="Ex: 123"
-                      className="border p-2 rounded w-full"
                     />
                     {errors.address?.number?.message && <ErrorsMessage message={errors.address.number.message} />}
                   </div>
+                </div>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      type="button"
-                      onClick={() => setCurrentStep(1)}
-                      className="bg-gray-300 hover:bg-gray-400 text-gray-700 p-2 rounded"
-                    >
-                      Voltar
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={isPending}
-                    >
-                      Criar Anúncio
-                    </Button>
-                  </div>
-                </>
-              )}
-
-            </form>
-
-            {showSuccessMessage && (
-              <div className="bg-green-100 text-green-800 p-3 rounded mt-4">
-                {showSuccessMessage}
-              </div>
+                <div className="flex space-x-4">
+                  <Button
+                    type="button"
+                    onClick={() => setCurrentStep(1)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Voltar
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="w-full"
+                  >
+                    Criar Anúncio
+                  </Button>
+                </div>
+              </>
             )}
-            {showErrorMessage && (
-              <div className="bg-red-100 text-red-800 p-3 rounded mt-4">
-                {showErrorMessage}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+          </form>
+
+          {showSuccessMessage && (
+            <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-md">
+              {showSuccessMessage}
+            </div>
+          )}
+          {showErrorMessage && (
+            <div className="mt-4 p-4 bg-red-100 text-red-800 rounded-md">
+              {showErrorMessage}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </section>
+    <Footer />
     </>
   );
 }
