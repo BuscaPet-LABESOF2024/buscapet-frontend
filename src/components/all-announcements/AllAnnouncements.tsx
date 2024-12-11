@@ -8,6 +8,15 @@ import { useState } from 'react';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { fetchAnnouncementDetails } from '@/api/announcement';
 import { useNavigate } from 'react-router-dom';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '../ui/pagination';
 
 export default function AllAnnouncements() {
   const [filters, setFilters] = useState<FilterFormSchemaType>({
@@ -15,14 +24,17 @@ export default function AllAnnouncements() {
     animalSize: '',
   });
 
+  const [page, setPage] = useState(0);
+
   const navigate = useNavigate();
 
   const {
-    data: announcements,
+    data: pageableAnnouncements,
     isError,
     isPending,
   } = useGetAnnouncementsWithFilter({
     filters,
+    pageNumber: page,
   });
 
   const handleFilterSubmit = (formData: FilterFormSchemaType) => {
@@ -32,10 +44,7 @@ export default function AllAnnouncements() {
   const handleViewDetails = async (id: number) => {
     console.log(id);
     try {
-      // Chama o backend para buscar os detalhes do anúncio
       const announcementDetails = await fetchAnnouncementDetails(id);
-
-      // Navega para a página de detalhes e passa os dados como estado
       navigate(`/announcement-details/${id}`, {
         state: { announcementDetails },
       });
@@ -65,12 +74,13 @@ export default function AllAnnouncements() {
           Últimos anúncios
         </h2>
         <div>
-          {announcements && announcements.length === 0 ? (
+          {pageableAnnouncements &&
+          pageableAnnouncements.content?.length === 0 ? (
             <p className="text-center">Nenhum anúncio encontrado.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {announcements &&
-                announcements.map((announcement) => (
+              {pageableAnnouncements.content &&
+                pageableAnnouncements.content.map((announcement) => (
                   <AnnouncementCard
                     key={announcement.id}
                     id={announcement.id} // Passa o id do anúncio
@@ -93,6 +103,51 @@ export default function AllAnnouncements() {
           )}
         </div>
       </div>
+
+      {pageableAnnouncements?.content?.length > 0 && (
+        <div className="my-8">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={() => setPage((old) => Math.max(old - 1, 0))}
+                  className={page === 0 ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+              {[...Array(pageableAnnouncements.totalPages)].map((_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    href="#"
+                    onClick={() => setPage(i)}
+                    isActive={page === i}
+                  >
+                    {i}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={() =>
+                    setPage((old) =>
+                      Math.min(old + 1, pageableAnnouncements.totalPages - 1)
+                    )
+                  }
+                  className={
+                    page === pageableAnnouncements.totalPages - 1
+                      ? 'pointer-events-none opacity-50'
+                      : ''
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
       <Footer />
     </>
   );
