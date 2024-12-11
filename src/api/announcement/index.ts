@@ -5,13 +5,12 @@ export const AnnouncementApi = {
   async getAnnouncementsWithFilter({
     filters,
     pageNumber = 0,
-    size = 10,
-  }: GetAnnouncementsWithFilterParams): Promise<AnnouncementResponse[]> {
+    size = 8,
+  }: GetAnnouncementsWithFilterParams): Promise<PageableContent<AnnouncementResponse>> {
     const { data } = await axios.post('/announcement/search', filters, {
       params: { pageNumber, size },
     });
-    console.log("data -> ", data);
-    return data.content;
+    return data;
   },
   async getAnnouncements(): Promise<AnnouncementResponse[]> {
     const { data } = await axios.get('/announcement/all-announcement');
@@ -26,6 +25,13 @@ export const AnnouncementApi = {
     return data;
   },
 };
+
+export type PageableContent<T> = {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+}
 
 export interface AnnouncementResponse {
   id: number;
@@ -82,7 +88,6 @@ export enum AnnouncementType {
   Adoption = 3,
 }
 
-// Interface genérica para os detalhes de um anuncio
 export interface IAnnouncementDetailsBase {
   title: string;
   description: string;
