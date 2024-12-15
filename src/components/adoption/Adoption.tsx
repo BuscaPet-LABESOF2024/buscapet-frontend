@@ -2,14 +2,15 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import ErrorsMessage from '../commons/FormErrorsMessage'; // Componente de mensagens de erro
-import { adoptionSchema } from './schema'; // Validação com Zod
+import { Check, ChevronRight, ChevronLeft, Upload } from 'lucide-react';
+import ErrorsMessage from '../commons/FormErrorsMessage';
+import { adoptionSchema } from './schema';
 import type { AdoptionFormSchema } from './type';
 import { useDropzone } from 'react-dropzone';
-import { useCreateAdoptionAnnouncement } from '../../api/adoption/hooks'; // Hook que usa mutate para criar anúncio
+import { useCreateAdoptionAnnouncement } from '../../api/adoption/hooks';
 import Header from '../home/header/Header';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../ui/button';
+import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
@@ -19,19 +20,18 @@ import Footer from '../home/Footer';
 export default function Adoption() {
   const navigate = useNavigate();
   const [imgSize, setImgSize] = useState<number>(0);
-  const [showSuccessMessage] = useState<string | null>(null);
-  const [showErrorMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedFileName, setSelectedFileName] = useState<string | null>(null); // Novo estado para armazenar o nome do arquivo
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
 
-  const { mutateAsync: createAdoptionAnnouncement, isPending, isError, isSuccess } = useCreateAdoptionAnnouncement();
+  const { mutateAsync: createAdoptionAnnouncement, isPending } = useCreateAdoptionAnnouncement();
 
   const {
     formState: { errors },
     handleSubmit,
     register,
     setValue,
-    watch
+    watch,
+    clearErrors
   } = useForm<AdoptionFormSchema>({
     resolver: zodResolver(adoptionSchema),
     defaultValues: {
@@ -55,7 +55,6 @@ export default function Adoption() {
   const sizesOptions = ['Selecione uma opção', 'Pequeno', 'Médio', 'Grande'];
 
   const onSubmit: SubmitHandler<AdoptionFormSchema> = async (data) => {
-
     const payload = {
       title: data.title,
       description: data.description,
@@ -78,16 +77,14 @@ export default function Adoption() {
     };
 
     try {
-      // Validação do tamanho da imagem
-      if (imgSize > 4 * 1024 * 1024) { // 4MB em bytes
+      if (imgSize > 4 * 1024 * 1024) {
         toast({
           title: 'Erro ao cadastrar animal para adoção',
-          description: 'A imagem deve ter no máximo 4MB.',
+          description: 'A imagem deve ter no máximo 4 MB.',
         });
-        return; // Interrompe o fluxo se a imagem for muito grande
+        return;
       }
     
-      // Chamada para criar o anúncio
       await createAdoptionAnnouncement(payload);
     
       toast({
@@ -103,26 +100,23 @@ export default function Adoption() {
         description: 'Tente novamente',
       });
     }
-    
   };
 
   const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0]; // Apenas aceita uma imagem  
+    const file = acceptedFiles[0];
     if (file) {
-  
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
           const resultado = (reader.result as string).substring(23);
           setValue('imageAnnouncement.image', resultado);
-          setSelectedFileName(file.name); // Atualiza o nome do arquivo
-          setImgSize(file.size); // Atualiza o estado com o tamanho do arquivo
+          setSelectedFileName(file.name);
+          setImgSize(file.size);
         }
       };
-      reader.readAsDataURL(file); // Lê o arquivo como uma URL de dados
+      reader.readAsDataURL(file);
     }
   };
-  
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: { 'image/*': [] },
@@ -130,39 +124,80 @@ export default function Adoption() {
   });
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const input = event.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    const input = event.target.value.replace(/\D/g, '');
     let formattedPhone = '';
   
     if (input.length >= 1) {
-      formattedPhone = '(' + input.substring(0, 2); // Adiciona o DDD com parênteses
+      formattedPhone = '(' + input.substring(0, 2);
     }
     if (input.length >= 3) {
-      formattedPhone += ') ' + input.substring(2, 7); // Adiciona a parte inicial do número
+      formattedPhone += ') ' + input.substring(2, 7);
     }
     if (input.length >= 8) {
-      formattedPhone += '-' + input.substring(7, 11); // Adiciona o traço e a parte final
+      formattedPhone += '-' + input.substring(7, 11);
     }
   
-    setValue('contact_phone', formattedPhone); // Atualiza o valor no formulário
+    setValue('contact_phone', formattedPhone);
+
+    if (formattedPhone.length >= 14) {
+      clearErrors('contact_phone');
+    }
+  };
+
+  const ProgressIndicator = ({ currentStep, totalSteps }: { currentStep: number, totalSteps: number }) => {
+    const steps = [
+      'Informações do Anúncio',
+      'Informações do Animal',
+      'Resumo'
+    ];
+
+    return (
+      <div className="flex items-center justify-between mb-8">
+        {steps.map((step, index) => (
+          <div key={index} className="flex flex-col items-center">
+            <div className="flex items-center">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  index + 1 <= currentStep ? 'bg-primary text-white' : 'bg-gray-200 text-gray-600'
+                }`}
+              >
+                {index + 1 < currentStep ? <Check className="w-5 h-5" /> : index + 1}
+              </div>
+              {index < totalSteps - 1 && (
+                <div
+                  className={`h-1 w-16 mx-2 ${
+                    index + 1 < currentStep ? 'bg-primary' : 'bg-gray-200'
+                  }`}
+                />
+              )}
+            </div>
+            <span className={`mt-2 text-sm ${index + 1 <= currentStep ? 'text-primary font-medium' : 'text-gray-500'}`}>
+              {step}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
     <>
       <Header />
-      <section id="adoption" className="bg-gray-50 py-12 min-h-screen flex items-center justify-center mt-16">
+      <section id="adoption" className="bg-gray-50 py-12 min-h-screen flex items-center justify-center mt-14">
         <Card className="w-full max-w-2xl">
           <CardHeader>
-            <CardTitle className="text-4xl font-extrabold text-center">
+            <CardTitle className="text-3xl font-semi-bold text-center">
               <span className="bg-gradient-to-r from-primary to-purple-600 text-transparent bg-clip-text">
                 Cadastro de Animal para Adoção
               </span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <ProgressIndicator currentStep={currentStep} totalSteps={3} />
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {currentStep === 1 && (
-                <>
-                  <div className="space-y-4">
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="title">Título do Anúncio</Label>
                       <Input
@@ -172,18 +207,6 @@ export default function Adoption() {
                       />
                       {errors.title?.message && <ErrorsMessage message={errors.title.message} />}
                     </div>
-
-                    <div>
-                      <Label htmlFor="description">Descrição</Label>
-                      <Textarea
-                        id="description"
-                        {...register('description')}
-                        placeholder="Descrição geral da origem do animal, bairro encontrado, personalidade, etc..."
-                        className="h-32"
-                      />
-                      {errors.description?.message && <ErrorsMessage message={errors.description.message} />}
-                    </div>
-
                     <div>
                       <Label htmlFor="contact_phone">Telefone de Contato</Label>
                       <Input
@@ -196,32 +219,36 @@ export default function Adoption() {
                       />
                       {errors.contact_phone?.message && <ErrorsMessage message={errors.contact_phone.message} />}
                     </div>
-
-                    <div 
-                      {...getRootProps()} 
-                      className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer"
-                    >
-                      <input {...getInputProps()} />
-                      <p>Arraste ou clique para fazer upload de fotos do animal</p>
-                      <p className="text-xs italic text-red-700">A imagem deve ter no máximo 4MB</p>
-                    </div>
-                    {selectedFileName && <p className="mt-2 text-sm text-gray-500 text-center">{selectedFileName}</p>}
-                    {errors.imageAnnouncement?.message && <ErrorsMessage message={errors.imageAnnouncement?.message} />}
                   </div>
 
-                  <Button 
-                    type="button" 
-                    onClick={() => setCurrentStep(2)} 
-                    className="w-full"
+                  <div>
+                    <Label htmlFor="description">Descrição</Label>
+                    <Textarea
+                      id="description"
+                      {...register('description')}
+                      placeholder="Descrição geral da origem do animal, bairro encontrado, personalidade, etc..."
+                      className="h-12"
+                    />
+                    {errors.description?.message && <ErrorsMessage message={errors.description.message} />}
+                  </div>
+
+                  <div 
+                    {...getRootProps()} 
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-2 text-center hover:border-primary transition-colors cursor-pointer"
                   >
-                    Próxima Etapa
-                  </Button>
-                </>
+                    <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
+                    <input {...getInputProps()} />
+                    <p>Arraste ou clique para fazer upload de fotos do animal</p>
+                    <p className="text-xs italic text-red-700">A imagem (jpeg, jpg, webp) deve ter no máximo 4 MB</p>
+                  </div>
+                  {selectedFileName && <p className="mt-2 text-sm text-gray-500 text-center">{selectedFileName}</p>}
+                  {errors.imageAnnouncement?.message && <ErrorsMessage message={errors.imageAnnouncement?.message} />}
+                </div>
               )}
 
               {currentStep === 2 && (
-                <>
-                  <div className="space-y-4">
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <Label htmlFor="animal.name">Nome do Animal</Label>
                       <Input
@@ -231,7 +258,6 @@ export default function Adoption() {
                       />
                       {errors.animal?.name?.message && <ErrorsMessage message={errors.animal.name.message} />}
                     </div>
-
                     <div>
                       <Label htmlFor="animal.type">Tipo de Animal</Label>
                       <Input
@@ -240,7 +266,6 @@ export default function Adoption() {
                         placeholder="Ex: Cachorro, Gato..."
                       />
                     </div>
-
                     <div>
                       <Label htmlFor="animal.breed">Raça</Label>
                       <Input
@@ -250,12 +275,11 @@ export default function Adoption() {
                       />
                       {errors.animal?.breed?.message && <ErrorsMessage message={errors.animal.breed.message} />}
                     </div>
-
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="animal.size" className="block text-sm font-medium text-gray-700">
-                        Tamanho do Animal
-                      </label>
-                      <select {...register('animal.size')} className="border p-2 rounded w-full">
+                      <Label htmlFor="animal.size">Tamanho do Animal</Label>
+                      <select {...register('animal.size')} className="w-full p-2 border border-gray-300 rounded-md">
                         {sizesOptions.map((size, i) => (
                           <option key={i} value={i}>
                             {size}
@@ -264,55 +288,85 @@ export default function Adoption() {
                       </select>
                       {errors.animal?.size?.message && <ErrorsMessage message={errors.animal.size.message} />}
                     </div>
-
                     <div>
-                      <Label htmlFor="animal.age">Idade aproximada do animal (em anos)</Label>
+                      <Label htmlFor="animal.age">Idade aproximada (anos)</Label>
                       <Input
                         id="animal.age"
                         type="number"
-                        step="1"   // Apenas números inteiros
-                        min="0"    // Não aceita valores negativos
+                        step="1"
+                        min="0"
                         {...register('animal.age', {
-                          valueAsNumber: true, // Converte o valor para número automaticamente
+                          valueAsNumber: true,
                         })}
                         placeholder="Ex. 1"
                       />
                       {errors.animal?.age?.message && <ErrorsMessage message={errors.animal.age.message} />}
                     </div>
-
                   </div>
-
-                  <div className="flex space-x-4">
-                    <Button
-                      type="button"
-                      onClick={() => setCurrentStep(1)}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      Voltar
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={isPending}
-                      className="w-full"
-                    >
-                      Criar Anúncio
-                    </Button>
-                  </div>
-                </>
+                </div>
               )}
-            </form>
 
-            {showSuccessMessage && (
-              <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-md">
-                {showSuccessMessage}
+              {currentStep === 3 && (
+                <div className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium text-center">Informações do Anúncio</h3>
+                      <div className={`bg-gray-50 p-4 rounded-lg ${errors.title || errors.description || errors.contact_phone || errors.imageAnnouncement ? 'border-2 border-red-500' : ''}`}>
+                        <p>Título: <i className='text-gray-700 text-sm'>{watch('title')}</i></p>
+                        {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
+                        
+                        <p>Descrição: <i className='text-gray-700 text-sm'>{watch('description')}</i></p>
+                        {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
+                        
+                        <p>Telefone de Contato: <i className='text-gray-700 text-sm'>{watch('contact_phone')}</i></p>
+                        {errors.contact_phone && <p className="text-sm text-red-500">{errors.contact_phone.message}</p>}
+                        
+                        <p>Imagem: <i className='text-gray-700 text-sm'>{watch('imageAnnouncement.image') ? 'Carregada' : 'Não carregada'}</i></p>
+                        {errors.imageAnnouncement && <p className="text-sm text-red-500">{errors.imageAnnouncement.message}</p>}
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium text-center">Informações do Animal</h3>
+                      <div className={`bg-gray-50 p-4 rounded-lg ${errors.animal?.name || errors.animal?.type || errors.animal?.breed || errors.animal?.size || errors.animal?.age ? 'border-2 border-red-500' : ''}`}>
+                        <p>Nome: <i className='text-gray-700 text-sm'>{watch('animal.name')}</i></p>
+                        {errors.animal?.name && <p className="text-sm text-red-500">{errors.animal.name.message}</p>}
+                        
+                        <p>Tipo: <i className='text-gray-700 text-sm'>{watch('animal.type')}</i></p>
+                        
+                        <p>Raça: <i className='text-gray-700 text-sm'>{watch('animal.breed')}</i></p>
+                        {errors.animal?.breed && <p className="text-sm text-red-500">{errors.animal.breed.message}</p>}
+                        
+                        <p>Tamanho: <i className='text-gray-700 text-sm'>{watch('animal.size')}</i></p>
+                        {errors.animal?.size && <p className="text-sm text-red-500">{errors.animal.size.message}</p>}
+                        
+                        <p>Idade: <i className='text-gray-700 text-sm'>{watch('animal.age')}</i></p>
+                        {errors.animal?.age && <p className="text-sm text-red-500">{errors.animal.age.message}</p>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+
+              <div className="flex justify-between mt-6">
+                {currentStep > 1 && (
+                  <Button type="button" onClick={() => setCurrentStep(prev => prev - 1)} variant="outline">
+                    <ChevronLeft className="mr-2 h-4 w-4" /> Voltar
+                  </Button>
+                )}
+                {currentStep < 3 && (
+                  <Button type="button" onClick={() => setCurrentStep(prev => prev + 1)} className="ml-auto">
+                    Próxima Etapa <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                )}
+                {currentStep === 3 && (
+                  <Button type="submit" disabled={isPending} className="ml-auto">
+                    Criar Anúncio <Check className="ml-2 h-4 w-4" />
+                  </Button>
+                )}
               </div>
-            )}
-            {showErrorMessage && (
-              <div className="mt-4 p-4 bg-red-100 text-red-800 rounded-md">
-                {showErrorMessage}
-              </div>
-            )}
+            </form>
           </CardContent>
         </Card>
       </section>
@@ -320,3 +374,4 @@ export default function Adoption() {
     </>
   );
 }
+
