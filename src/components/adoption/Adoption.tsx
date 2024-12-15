@@ -203,6 +203,7 @@ export default function Adoption() {
                     >
                       <input {...getInputProps()} />
                       <p>Arraste ou clique para fazer upload de fotos do animal</p>
+                      <p className="text-xs italic text-red-700">A imagem deve ter no máximo 4MB</p>
                     </div>
                     {selectedFileName && <p className="mt-2 text-sm text-gray-500 text-center">{selectedFileName}</p>}
                     {errors.imageAnnouncement?.message && <ErrorsMessage message={errors.imageAnnouncement?.message} />}
