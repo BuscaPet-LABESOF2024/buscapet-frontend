@@ -19,8 +19,8 @@ import Footer from '../home/Footer';
 export default function Adoption() {
   const navigate = useNavigate();
   const [imgSize, setImgSize] = useState<number>(0);
-  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
-  const [showErrorMessage, setShowErrorMessage] = useState<string | null>(null);
+  const [showSuccessMessage] = useState<string | null>(null);
+  const [showErrorMessage] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null); // Novo estado para armazenar o nome do arquivo
 
@@ -42,8 +42,8 @@ export default function Adoption() {
         type: '',
         breed: '',
         size: '',
-        weight: '',
-        age: '',
+        weight: 0.0,
+        age: 0,
       },
       contact_phone: '',
       imageAnnouncement: {
@@ -247,6 +247,7 @@ export default function Adoption() {
                         {...register('animal.breed')}
                         placeholder="Ex. Sem raça definida..."
                       />
+                      {errors.animal?.breed?.message && <ErrorsMessage message={errors.animal.breed.message} />}
                     </div>
 
                     <div>
@@ -262,6 +263,22 @@ export default function Adoption() {
                       </select>
                       {errors.animal?.size?.message && <ErrorsMessage message={errors.animal.size.message} />}
                     </div>
+
+                    <div>
+                      <Label htmlFor="animal.age">Idade aproximada do animal (em anos)</Label>
+                      <Input
+                        id="animal.age"
+                        type="number"
+                        step="1"   // Apenas números inteiros
+                        min="0"    // Não aceita valores negativos
+                        {...register('animal.age', {
+                          valueAsNumber: true, // Converte o valor para número automaticamente
+                        })}
+                        placeholder="Ex. 1"
+                      />
+                      {errors.animal?.age?.message && <ErrorsMessage message={errors.animal.age.message} />}
+                    </div>
+
                   </div>
 
                   <div className="flex space-x-4">

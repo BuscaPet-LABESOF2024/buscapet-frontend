@@ -298,6 +298,7 @@ export default function FoundAnimal() {
                       {...register('animal.breed')}
                       placeholder="Ex. Sem raça definida..."
                     />
+                    {errors.animal?.breed?.message && <ErrorsMessage message={errors.animal.breed.message} />}
                   </div>
 
                   <div>
@@ -315,12 +316,33 @@ export default function FoundAnimal() {
                   </div>
 
                   <div>
+                      <Label htmlFor="animal.weight">Peso do animal</Label>
+                      <Input
+                        id="animal.weight"
+                        {...register('animal.weight')}
+                        placeholder="Ex. 3,1"
+                      />
+                      {errors.animal?.weight?.message && <ErrorsMessage message={errors.animal.weight.message} />}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="animal.age">Idade aproximada do animal</Label>
+                      <Input
+                        id="animal.age"
+                        {...register('animal.age')}
+                        placeholder="Ex. 1"
+                      />
+                      {errors.animal?.age?.message && <ErrorsMessage message={errors.animal.age.message} />}
+                    </div>
+
+                  <div>
                     <Label htmlFor="data">Data que o animal foi encontrado</Label>
                     <Input
                       type="datetime-local"
                       id="data"
                       {...register('data')}
                     />
+                    {errors.data?.message && <ErrorsMessage message={errors.data.message} />}
                   </div>
 
                   <div>
