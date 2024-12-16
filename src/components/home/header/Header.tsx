@@ -37,9 +37,6 @@ export default function Header() {
               <li className="hover:text-slate-200">
                 <Link to="/announcement-registration">Cadastrar Anúncio</Link>
               </li>
-              <li className="hover:text-slate-200">
-                <Link to="/about">Sobre</Link>
-              </li>
             </ul>
           </nav>
         </div>
