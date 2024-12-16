@@ -42,7 +42,7 @@ export default function Adoption() {
         type: '',
         breed: '',
         size: '',
-        weight: 0.0,
+        weight: '',
         age: 0,
       },
       contact_phone: '',
@@ -238,7 +238,7 @@ export default function Adoption() {
                   >
                     <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
                     <input {...getInputProps()} />
-                    <p>Arraste ou clique para fazer upload de fotos do animal</p>
+                    <p className="whitespace-normal break-words">Arraste ou clique para fazer upload de fotos do animal</p>
                     <p className="text-xs italic text-red-700">A imagem (jpeg, jpg, webp) deve ter no máximo 4 MB</p>
                   </div>
                   {selectedFileName && <p className="mt-2 text-sm text-gray-500 text-center">{selectedFileName}</p>}
@@ -302,6 +302,17 @@ export default function Adoption() {
                       />
                       {errors.animal?.age?.message && <ErrorsMessage message={errors.animal.age.message} />}
                     </div>
+                      <div>
+                        <Label htmlFor="animal.weight">Peso do animal (kg)</Label>
+                        <Input
+                          id="animal.weight"
+                          type="number"
+                          step="0.1"
+                          {...register('animal.weight')}
+                          placeholder="Ex. 3.1"
+                        />
+                        {errors.animal?.weight?.message && <ErrorsMessage message={errors.animal.weight.message} />}
+                      </div>
                   </div>
                 </div>
               )}
@@ -312,16 +323,16 @@ export default function Adoption() {
                     <div className="space-y-4">
                       <h3 className="text-lg font-medium text-center">Informações do Anúncio</h3>
                       <div className={`bg-gray-50 p-4 rounded-lg ${errors.title || errors.description || errors.contact_phone || errors.imageAnnouncement ? 'border-2 border-red-500' : ''}`}>
-                        <p>Título: <i className='text-gray-700 text-sm'>{watch('title')}</i></p>
+                        <p className="whitespace-normal break-words">Título: <i className='text-gray-700 text-sm'>{watch('title')}</i></p>
                         {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
                         
-                        <p>Descrição: <i className='text-gray-700 text-sm'>{watch('description')}</i></p>
+                        <p className="whitespace-normal break-words">Descrição: <i className='text-gray-700 text-sm'>{watch('description')}</i></p>
                         {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
                         
-                        <p>Telefone de Contato: <i className='text-gray-700 text-sm'>{watch('contact_phone')}</i></p>
+                        <p className="whitespace-normal break-words">Telefone de Contato: <i className='text-gray-700 text-sm'>{watch('contact_phone')}</i></p>
                         {errors.contact_phone && <p className="text-sm text-red-500">{errors.contact_phone.message}</p>}
                         
-                        <p>Imagem: <i className='text-gray-700 text-sm'>{watch('imageAnnouncement.image') ? 'Carregada' : 'Não carregada'}</i></p>
+                        <p className="whitespace-normal break-words">Imagem: <i className='text-gray-700 text-sm'>{watch('imageAnnouncement.image') ? 'Carregada' : 'Não carregada'}</i></p>
                         {errors.imageAnnouncement && <p className="text-sm text-red-500">{errors.imageAnnouncement.message}</p>}
                       </div>
                     </div>
@@ -329,19 +340,22 @@ export default function Adoption() {
                     <div className="space-y-4">
                       <h3 className="text-lg font-medium text-center">Informações do Animal</h3>
                       <div className={`bg-gray-50 p-4 rounded-lg ${errors.animal?.name || errors.animal?.type || errors.animal?.breed || errors.animal?.size || errors.animal?.age ? 'border-2 border-red-500' : ''}`}>
-                        <p>Nome: <i className='text-gray-700 text-sm'>{watch('animal.name')}</i></p>
+                        <p className="whitespace-normal break-words">Nome: <i className='text-gray-700 text-sm'>{watch('animal.name')}</i></p>
                         {errors.animal?.name && <p className="text-sm text-red-500">{errors.animal.name.message}</p>}
                         
-                        <p>Tipo: <i className='text-gray-700 text-sm'>{watch('animal.type')}</i></p>
+                        <p className="whitespace-normal break-words">Tipo: <i className='text-gray-700 text-sm'>{watch('animal.type')}</i></p>
                         
-                        <p>Raça: <i className='text-gray-700 text-sm'>{watch('animal.breed')}</i></p>
+                        <p className="whitespace-normal break-words">Raça: <i className='text-gray-700 text-sm'>{watch('animal.breed')}</i></p>
                         {errors.animal?.breed && <p className="text-sm text-red-500">{errors.animal.breed.message}</p>}
                         
-                        <p>Tamanho: <i className='text-gray-700 text-sm'>{watch('animal.size')}</i></p>
+                        <p className="whitespace-normal break-words">Tamanho: <i className='text-gray-700 text-sm'>{watch('animal.size')}</i></p>
                         {errors.animal?.size && <p className="text-sm text-red-500">{errors.animal.size.message}</p>}
                         
-                        <p>Idade: <i className='text-gray-700 text-sm'>{watch('animal.age')}</i></p>
+                        <p className="whitespace-normal break-words">Idade: <i className='text-gray-700 text-sm'>{watch('animal.age')}</i></p>
                         {errors.animal?.age && <p className="text-sm text-red-500">{errors.animal.age.message}</p>}
+
+                        <p className="whitespace-normal break-words">Peso: <i className='text-gray-700 text-sm'>{watch('animal.weight')} kg</i></p>
+                        {errors.animal?.weight && <p className="text-red-500 text-xs">{errors.animal.weight.message}</p>}
                       </div>
                     </div>
                   </div>

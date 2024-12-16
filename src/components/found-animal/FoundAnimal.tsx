@@ -17,6 +17,7 @@ import { Label } from "../ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import Footer from '../home/Footer';
 import { Check, ChevronRight, ChevronLeft, Upload } from 'lucide-react';
+import { clear } from 'console';
 
 export default function FoundAnimal() {
   const navigate = useNavigate();
@@ -65,14 +66,16 @@ export default function FoundAnimal() {
 
   const handleCepChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const cep = event.target.value;
-    setValue('address.cep', cep);
     const cepNumerico = cep.replace(/\D/g, '');
+    setValue('address.cep', cepNumerico);
   
     if (cepNumerico.length !== 8) {
       setError('address.cep', {
         type: 'manual',
         message: 'CEP inválido! O CEP deve ter 8 dígitos.',
       });
+      setValue('address.street', '');
+      setValue('address.neighborhod', '');
       return;
     }
   
@@ -84,6 +87,8 @@ export default function FoundAnimal() {
           type: 'manual',
           message: 'CEP inexistente!',
         });
+        setValue('address.street', '');
+        setValue('address.neighborhod', '');
         return;
       }
   
@@ -91,6 +96,8 @@ export default function FoundAnimal() {
       setValue('address.neighborhod', data.bairro);
 
       clearErrors('address.cep');
+      clearErrors('address.street');
+      clearErrors('address.neighborhod');
     } catch (err) {
       setError('address.cep', {
         type: 'manual',
@@ -175,6 +182,7 @@ export default function FoundAnimal() {
   });
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    clearErrors('contact_phone');
     const input = event.target.value.replace(/\D/g, '');
     let formattedPhone = '';
   
@@ -285,7 +293,7 @@ export default function FoundAnimal() {
                   >
                     <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
                     <input {...getInputProps()} />
-                    <p>Arraste ou clique para fazer upload de fotos do animal</p>
+                    <p className="whitespace-normal break-words">Arraste ou clique para fazer upload de fotos do animal</p>
                     <p className="text-xs italic text-red-700">A imagem (jpeg, jpg, webp) deve ter no máximo 4 MB</p>
                   </div>
                   {selectedFileName && <p className="text-sm text-gray-500 text-center">{selectedFileName}</p>}
@@ -420,16 +428,16 @@ export default function FoundAnimal() {
                     <div className="space-y-4">
                       <h3 className="text-lg font-medium text-center">Informações do Anúncio</h3>
                       <div className={`bg-gray-50 p-4 rounded-lg ${errors.title || errors.description || errors.contact_phone || errors.imageAnnouncement ? 'border-2 border-red-500' : ''}`}>
-                        <p>Título: <i className='text-gray-700 text-sm'>{watch('title')}</i></p>
+                        <p className="whitespace-normal break-words">Título: <i className='text-gray-700 text-sm'>{watch('title')}</i></p>
                         {errors.title && <p className="text-red-500 text-xs">{errors.title.message}</p>}
                         
-                        <p>Descrição: <i className='text-gray-700 text-sm'>{watch('description')}</i></p>
+                        <p className="whitespace-normal break-words">Descrição: <i className='text-gray-700 text-sm'>{watch('description')}</i></p>
                         {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
                         
-                        <p>Telefone de Contato: <i className='text-gray-700 text-sm'>{watch('contact_phone')}</i></p>
+                        <p className="whitespace-normal break-words">Telefone de Contato: <i className='text-gray-700 text-sm'>{watch('contact_phone')}</i></p>
                         {errors.contact_phone && <p className="text-red-500 text-xs">{errors.contact_phone.message}</p>}
                         
-                        <p>Imagem: <i className='text-gray-700 text-sm'>{watch('imageAnnouncement.image') ? 'Carregada' : 'Não carregada'}</i></p>
+                        <p className="whitespace-normal break-words">Imagem: <i className='text-gray-700 text-sm'>{watch('imageAnnouncement.image') ? 'Carregada' : 'Não carregada'}</i></p>
                         {errors.imageAnnouncement && <p className="text-red-500 text-xs">{errors.imageAnnouncement.message}</p>}
                       </div>
                     </div>
@@ -438,22 +446,22 @@ export default function FoundAnimal() {
                     <div className="space-y-4">
                       <h3 className="text-lg font-medium text-center">Informações do Animal</h3>
                       <div className={`bg-gray-50 p-4 rounded-lg ${errors.animal?.name || errors.animal?.type || errors.animal?.breed || errors.animal?.size || errors.animal?.weight || errors.animal?.age ? 'border-2 border-red-500' : ''}`}>
-                        <p>Nome: <i className='text-gray-700 text-sm'>{watch('animal.name')}</i></p>
+                        <p className="whitespace-normal break-words">Nome: <i className='text-gray-700 text-sm'>{watch('animal.name')}</i></p>
                         {errors.animal?.name && <p className="text-red-500 text-xs">{errors.animal.name.message}</p>}
 
-                        <p>Tipo: <i className='text-gray-700 text-sm'>{watch('animal.type')}</i></p>
+                        <p className="whitespace-normal break-words">Tipo: <i className='text-gray-700 text-sm'>{watch('animal.type')}</i></p>
                         {/* {errors.animal?.type && <p className="text-red-500 text-xs">{errors.animal.type.message}</p>} */}
 
-                        <p>Raça: <i className='text-gray-700 text-sm'>{watch('animal.breed')}</i></p>
+                        <p className="whitespace-normal break-words">Raça: <i className='text-gray-700 text-sm'>{watch('animal.breed')}</i></p>
                         {errors.animal?.breed && <p className="text-red-500 text-xs">{errors.animal.breed.message}</p>}
 
-                        <p>Tamanho: <i className='text-gray-700 text-sm'>{sizesOptions[Number(watch('animal.size'))]}</i></p>
+                        <p className="whitespace-normal break-words">Tamanho: <i className='text-gray-700 text-sm'>{sizesOptions[Number(watch('animal.size'))]}</i></p>
                         {errors.animal?.size && <p className="text-red-500 text-xs">{errors.animal.size.message}</p>}
 
-                        <p>Peso: <i className='text-gray-700 text-sm'>{watch('animal.weight')} kg</i></p>
+                        <p className="whitespace-normal break-words">Peso: <i className='text-gray-700 text-sm'>{watch('animal.weight')} kg</i></p>
                         {errors.animal?.weight && <p className="text-red-500 text-xs">{errors.animal.weight.message}</p>}
 
-                        <p>Idade: <i className='text-gray-700 text-sm'>{watch('animal.age')} anos</i></p>
+                        <p className="whitespace-normal break-words">Idade: <i className='text-gray-700 text-sm'>{watch('animal.age')} anos</i></p>
                         {errors.animal?.age && <p className="text-red-500 text-xs">{errors.animal.age.message}</p>}
                       </div>
                     </div>
@@ -463,16 +471,16 @@ export default function FoundAnimal() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium text-center">Informações do Local</h3>
                     <div className={`bg-gray-50 p-4 rounded-lg ${errors.address?.cep || errors.address?.street || errors.address?.number || errors.address?.neighborhod ? 'border-2 border-red-500' : ''}`}>
-                      <p>CEP: <i className='text-gray-700 text-sm'>{watch('address.cep')}</i></p>
+                      <p className="whitespace-normal break-words">CEP: <i className='text-gray-700 text-sm'>{watch('address.cep')}</i></p>
                       {errors.address?.cep && <p className="text-red-500 text-xs">{errors.address.cep.message}</p>}
 
-                      <p>Rua: <i className='text-gray-700 text-sm'>{watch('address.street')}</i></p>
+                      <p className="whitespace-normal break-words">Rua: <i className='text-gray-700 text-sm'>{watch('address.street')}</i></p>
                       {errors.address?.street && <p className="text-red-500 text-xs">{errors.address.street.message}</p>}
 
-                      <p>Número: <i className='text-gray-700 text-sm'>{watch('address.number')}</i></p>
+                      <p className="whitespace-normal break-words">Número: <i className='text-gray-700 text-sm'>{watch('address.number')}</i></p>
                       {errors.address?.number && <p className="text-red-500 text-xs">{errors.address.number.message}</p>}
 
-                      <p>Bairro: <i className='text-gray-700 text-sm'>{watch('address.neighborhod')}</i></p>
+                      <p className="whitespace-normal break-words">Bairro: <i className='text-gray-700 text-sm'>{watch('address.neighborhod')}</i></p>
                       {errors.address?.neighborhod && <p className="text-red-500 text-xs">{errors.address.neighborhod.message}</p>}
                     </div>
                   </div>
