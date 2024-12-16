@@ -22,7 +22,7 @@ export default function Header() {
       <div className="flex flex-row justify-between items-center py-2 px-4 max-w-7xl mx-auto font-semibold">
         <div className="flex gap-4">
           <img
-            src="./img/logo-atual.png"
+            src="/img/logo-atual.png"
             alt="logo buscapet"
             className="w-[5rem] h-[5rem]"
           />

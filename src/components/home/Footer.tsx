@@ -5,7 +5,7 @@ export default function Footer() {
         {/* Logo e Nome do Site */}
         <div className="flex items-center space-x-3">
           <img
-            src="./img/logo-atual.png"
+            src="/img/logo-atual.png"
             alt="Logo BuscaPet"
             className="w-20 h-20"
           />

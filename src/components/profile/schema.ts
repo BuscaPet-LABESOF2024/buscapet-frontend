@@ -2,8 +2,10 @@ import { z } from 'zod';
 
 export const cepSchema = z
   .string()
-  .length(8, { message: 'O CEP deve ter exatamente 8 dígitos.' })
-  .regex(/^[0-9]+$/, { message: 'O CEP deve conter apenas números.' });
+  .length(9, { message: 'O CEP deve ter exatamente 8 dígitos.' })
+  .regex(/^\d{5}-\d{3}$/, {
+    message: 'O CEP deve estar no formato 00000-000.',
+  });
 
 export const phoneSchema = z
   .string()

@@ -33,9 +33,6 @@ export default function SidebarMenu() {
           >
             Meus Anúncios
           </Link>
-          <button className="block w-full rounded-lg px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50">
-            Deletar Conta
-          </button>
         </nav>
       </div>
     </aside>

@@ -7,7 +7,7 @@ import {
   useUpdateAddressData,
   useUpdateUserData,
 } from '@/api/user/hooks';
-import { Pencil } from 'lucide-react';
+import { Pencil, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
   cepSchema,
@@ -17,6 +17,9 @@ import {
   nameUserSchema,
   phoneSchema,
 } from './schema';
+import { useSearchCep } from '@/api/search-address/hooks';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 
 export default function ProfileData() {
   const token = localStorage.getItem('token')!;
@@ -34,6 +37,8 @@ export default function ProfileData() {
   const [cepError, setCepError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [houseNumberError, setHouseNumberError] = useState<string | null>(null);
+
+  const { searchCep } = useSearchCep();
 
   const validateName = (value: string) => {
     const result = nameUserSchema.safeParse(value);
@@ -101,6 +106,33 @@ export default function ProfileData() {
     await updateAddressMutation.mutateAsync();
     setIsEditingAddress(false);
     refetch();
+  };
+
+  const handleSearchCep = async () => {
+    if (!addressData?.cep) {
+      setCepError('Digite um CEP.');
+      return;
+    }
+
+    const formattedCep = addressData.cep.replace(/\D/g, ''); // Remove caracteres não numéricos
+    if (formattedCep.length !== 8) {
+      setCepError('Digite um CEP válido com 8 números.');
+      return;
+    }
+
+    try {
+      const result = await searchCep(formattedCep);
+      if (result) {
+        setAddressData({
+          ...addressData,
+          street: result.logradouro,
+          neighborhood: result.bairro,
+        });
+        setCepError(null);
+      }
+    } catch {
+      setCepError('Erro ao buscar o CEP.');
+    }
   };
 
   if (isLoading) {
@@ -288,20 +320,34 @@ export default function ProfileData() {
                 <div>
                   <p className="text-sm text-gray-500">CEP</p>
                   {isEditingAddress ? (
-                    <div>
-                      <input
-                        type="text"
-                        className="mt-1 w-full rounded-md border-gray-300 shadow-sm"
-                        value={addressData?.cep}
-                        onChange={(e) => {
-                          const newCep = formatCep(e.target.value);
-                          setAddressData({ ...addressData, cep: newCep });
-                          validateCep(newCep);
-                        }}
-                      />
-                      {cepError && (
-                        <p className="mt-1 text-xs text-red-600">{cepError}</p>
-                      )}
+                    <div className="flex items-center gap-2">
+                      <div className="flex-grow">
+                        <Input
+                          type="text"
+                          className="mt-1 w-full"
+                          value={addressData?.cep}
+                          onChange={(e) => {
+                            const newCep = formatCep(e.target.value);
+                            setAddressData({ ...addressData, cep: newCep });
+                            validateCep(newCep);
+                          }}
+                          placeholder="12345-678"
+                        />
+                        {cepError && (
+                          <p className="mt-1 text-xs text-red-600">
+                            {cepError}
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={handleSearchCep}
+                        className="mt-1"
+                        variant="outline"
+                      >
+                        <Search className="h-4 w-4" />
+                        <span className="sr-only">Buscar CEP</span>
+                      </Button>
                     </div>
                   ) : (
                     <p className="mt-1 text-sm font-medium text-gray-900">
