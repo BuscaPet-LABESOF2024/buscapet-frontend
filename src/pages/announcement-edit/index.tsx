@@ -1,15 +1,15 @@
+import EditAnnouncementFound from '@/components/edit-announcement-found/EditAnnouncementFound';
+import EditAnnouncementMissing from '@/components/edit-announcement-missing/EditAnnouncementMissing';
+import EditAnnouncementAdoption from '@/components/annoucement-edit-adoption/EditAnnouncementAdoption';
 import {
   AnimalSize,
   AnnouncementType,
   ImagesResponse,
 } from '@/api/announcement';
-import AnnoucementDetailsAdoption from '@/components/annoucement-details-adoption/AnnoucementDetailsAdoption';
-import AnnoucementDetailsFound from '@/components/annoucement-details-found/AnnoucementDetailsFound';
-import AnnoucementDetailsMissing from '@/components/annoucement-details-missing/AnnoucementDetailsMissing';
 import MainLayout from '@/components/main-layout/MainLayout';
 
-// Tipando as props corretamente
-interface AnnouncementDetailsProps {
+interface AnnouncementEditProps {
+  id: number;
   animal: {
     name: string;
     type: string;
@@ -34,7 +34,8 @@ interface AnnouncementDetailsProps {
   };
 }
 
-export default function AnnouncementDetailsPage({
+export default function EditAnnouncementPage({
+  id,
   animal,
   title,
   description,
@@ -44,12 +45,13 @@ export default function AnnouncementDetailsPage({
   announcementType,
   active,
   address,
-}: AnnouncementDetailsProps) {
+}: AnnouncementEditProps) {
   const renderAnnouncementDetails = () => {
     switch (announcementType) {
       case 1:
         return (
-          <AnnoucementDetailsMissing
+          <EditAnnouncementMissing
+            id={id}
             animal={animal}
             title={title}
             description={description}
@@ -63,7 +65,8 @@ export default function AnnouncementDetailsPage({
         );
       case 2:
         return (
-          <AnnoucementDetailsFound
+          <EditAnnouncementFound
+            id={id}
             animal={animal}
             title={title}
             description={description}
@@ -77,7 +80,8 @@ export default function AnnouncementDetailsPage({
         );
       case 3:
         return (
-          <AnnoucementDetailsAdoption
+          <EditAnnouncementAdoption
+            id={id}
             animal={animal}
             title={title}
             description={description}

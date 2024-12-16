@@ -43,7 +43,6 @@ export default function AnnoucementDetailsAdoption({
   contactPhone,
   contactEmail,
   images,
-  address,
   active,
   annoucementType,
 }: AnnoucementDetailsAdoptionProps) {
@@ -62,17 +61,17 @@ export default function AnnoucementDetailsAdoption({
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8">
+      <div className="mt-12 flex justify-center">
         {images.length > 0 && images[0]?.image ? (
           <img
-            className="rounded-t-lg h-96 w-full object-cover md:h-[500px]"
-            src={`data:image/jpeg;base64,${images[0].image}`} // Base64
+            className="rounded-md h-64 w-auto object-contain md:h-80 mx-auto"
+            src={`data:image/jpeg;base64,${images[0].image}`}
             alt={`Imagem do anúncio: ${title}`}
           />
         ) : (
           <img
-            className="rounded-t-lg h-96 w-full object-cover md:h-[500px]"
-            src="/img/avatarpet.png" // Imagem padrão
+            className="rounded-t-lg h-64 w-auto object-contain md:h-80 mx-auto"
+            src="/img/avatarpet.png"
             alt="Imagem padrão"
           />
         )}
@@ -136,14 +135,6 @@ export default function AnnoucementDetailsAdoption({
               Informações de Contato
             </h2>
             <div className="space-y-2">
-              <div className="flex items-start gap-2">
-                <span className="text-muted-foreground min-w-24">
-                  Endereço:
-                </span>
-                <span>
-                  {address?.street}, {address?.neighborhood || 'N/A'}
-                </span>
-              </div>
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground min-w-24">Email:</span>
                 <span>{contactEmail}</span>

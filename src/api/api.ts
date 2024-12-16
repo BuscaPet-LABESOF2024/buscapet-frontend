@@ -6,7 +6,7 @@ export const baseURL = `${serverUrl}`;
 
 const axios = Axios.create({
   baseURL: baseURL,
-  timeout: 120000,
+  timeout: 300000, // 5 minutos
   headers: {
     'Content-Type': 'application/json',
   },

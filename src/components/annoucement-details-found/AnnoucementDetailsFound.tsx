@@ -64,17 +64,17 @@ const AnnoucementDetailsFound: React.FC<AnnoucementDetailsFoundProps> = ({
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8">
-        {images.length > 0 && images[0]?.image ? ( // Usando optional chaining
+      <div className="mt-12 flex justify-center">
+        {images.length > 0 && images[0]?.image ? (
           <img
-            className="rounded-t-lg h-96 w-full object-cover md:h-[500px]"
-            src={`data:image/jpeg;base64,${images[0].image}`} // Exibe a primeira imagem
+            className="rounded-md h-64 w-auto object-contain md:h-80 mx-auto"
+            src={`data:image/jpeg;base64,${images[0].image}`}
             alt={`Imagem do anúncio: ${title}`}
           />
         ) : (
           <img
-            className="rounded-t-lg h-96 w-full object-cover md:h-[500px]"
-            src="/img/avatarpet.png" // Substitua pelo caminho da imagem padrão
+            className="rounded-t-lg h-64 w-auto object-contain md:h-80 mx-auto"
+            src="/img/avatarpet.png"
             alt="Imagem padrão"
           />
         )}
@@ -116,10 +116,6 @@ const AnnoucementDetailsFound: React.FC<AnnoucementDetailsFoundProps> = ({
               <span className="text-muted-foreground">Porte</span>
               <span>{sizeLabel}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Ativo</span>
-              <span>{active ? 'Sim' : 'Não'}</span>
-            </div>
           </div>
         </Card>
 
@@ -157,7 +153,7 @@ const AnnoucementDetailsFound: React.FC<AnnoucementDetailsFoundProps> = ({
 
           <Card className="p-6 bg-muted">
             <p className="text-center font-medium">
-              Se interessou? Entre em contato com o anunciante!
+              Este animal é seu? Entre em contato com o anunciante!
             </p>
           </Card>
         </div>

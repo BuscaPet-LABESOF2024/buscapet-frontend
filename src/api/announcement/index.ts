@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import axios from '../api';
 import { GetAnnouncementsWithFilterParams } from './hooks';
 
@@ -89,6 +90,7 @@ export enum AnnouncementType {
 }
 
 export interface IAnnouncementDetailsBase {
+  id: number;
   title: string;
   description: string;
   contactPhone: string;
@@ -96,8 +98,9 @@ export interface IAnnouncementDetailsBase {
   images: ImagesResponse[];
   announcementType: AnnouncementType;
   active: boolean;
-  address: {
-    street: string;
+  address?: {
+    street?: string;
+    cep?: string;
     neighborhood?: string;
     reference?: string;
     complemento?: string;
@@ -137,6 +140,42 @@ export const fetchAnnouncementDetails = async (
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar os detalhes do anúncio:', error);
+    throw error;
+  }
+};
+
+export const updateAnnouncement = async (
+  announcementData: AnnouncementDetails
+): Promise<void> => {
+  try {
+    console.log('Dados enviados:', JSON.stringify(announcementData, null, 2));
+
+    const response = await axios.put(`announcement/update-announcement`, {
+      ...announcementData,
+    });
+
+    console.log('Resposta do servidor:', response.data);
+    console.log('Anúncio atualizado com sucesso!');
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      console.error('Erro Axios:', error.message);
+      console.error('Código de erro:', error.code);
+      console.error('Resposta do servidor:', error.response?.data);
+    } else {
+      console.error('Erro desconhecido:', error);
+    }
+    throw error;
+  }
+};
+
+export const deleteAnnouncement = async (
+  announcementId: number
+): Promise<void> => {
+  try {
+    await axios.put(`/announcement/deactivate-announcement/${announcementId}`);
+    console.log('Anuncio deletado com sucesso!');
+  } catch (error) {
+    console.error('Erro ao deletar o anuncio:', error);
     throw error;
   }
 };
