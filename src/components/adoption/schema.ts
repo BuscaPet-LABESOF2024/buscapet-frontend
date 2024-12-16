@@ -26,7 +26,7 @@ export const adoptionSchema = z.object({
     .max(100, 'A raça do animal não pode ter mais que 100 caracteres'),
     
     size: z.string().optional(), // Torne opcional se necessário
-    weight: z.number().optional(), // Torne opcional se necessário
+    weight: z.string().optional(), // Torne opcional se necessário
     age: z.number().optional(), // Torne opcional se necessário
   }),
 
